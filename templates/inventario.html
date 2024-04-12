@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <title>Inventario</title>
+</head>
+<body class="container mt-4">
+    <h1 class="mb-4">Inventario</h1>
+    
+    <!-- Agregamos un campo de búsqueda -->
+    <div class="form-group">
+        <label for="searchProduct">Buscar Producto:</label>
+        <input type="text" class="form-control" id="searchProduct" placeholder="Ingrese el nombre del producto">
+    </div>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Producto</th>
+                <th scope="col">Marca</th>
+                <th scope="col">Valor</th>
+                <th scope="col">Precio</th>
+                <th scope="col">Cantidad</th>
+                <th scope="col">Comentarios</th>
+                <th scope="col">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for producto in productos %}
+                <tr>
+                    <th scope="row">{{ producto.id }}</th>
+                    <td>{{ producto.producto }}</td>
+                    <td>{{ producto.marca }}</td>
+                    <td>{{ producto.valor }}</td>
+                    <td>{{ producto.precio }}</td>
+                    <td>{{ producto.cantidad }}</td>
+                    <td>{{ producto.comentarios }}</td>
+                    <td>
+                        <a href="{{ url_for('editar_producto_route', producto_id=producto.id) }}" class="btn btn-warning btn-sm">Editar</a>
+                        <a href="{{ url_for('eliminar_producto_route', producto_id=producto.id) }}" class="btn btn-danger btn-sm ml-2">Eliminar</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a class="btn btn-primary mt-4" href="{{ url_for('crear_producto_route') }}">Crear Nuevo Producto</a>
+    <a class="btn btn-secondary mt-4" href="{{ url_for('index') }}">Volver al Menú Principal</a>
+
+<!-- Agregamos script para la búsqueda en tiempo real -->
+<script>
+    document.getElementById('searchProduct').addEventListener('input', function() {
+        var input, filter, table, tr, td, i, txtValue;
+        input = document.getElementById('searchProduct');
+        filter = input.value.toUpperCase();
+        table = document.querySelector('.table');
+        tr = table.getElementsByTagName('tr');
+
+        for (i = 1; i < tr.length; i++) { // Empezamos desde 1 para omitir la fila de encabezado
+            var found = false;
+            for (var j = 0; j < tr[i].cells.length; j++) {
+                td = tr[i].cells[j];
+                if (td) {
+                    txtValue = td.textContent || td.innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        found = true;
+                        break;  // No es necesario revisar más celdas si ya se encontró la coincidencia
+                    }
+                }
+            }
+            tr[i].style.display = found ? '' : 'none';
+        }
+    });
+</script>
+
+
+</body>
+</html>

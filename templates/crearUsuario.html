@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <title>Crear Nuevo cliente</title>
+</head>
+<body class="container mt-4">
+    <h1 class="mb-4">Crear Nuevo Cliente</h1>
+    <form method="post" action="{{ url_for('crear_usuario_route') }}">
+
+        <div class="form-group">
+            <label for="nombre">Nombre:</label>
+            <input type="text" class="form-control" id="nombre" name="nombre" required>
+        </div>
+
+        <div class="form-group">
+            <label for="apellido">Apellido:</label>
+            <input type="text" class="form-control" id="apellido" name="apellido" required>
+        </div>
+
+        <div class="form-group">
+            <label for="direccion">Dirección:</label>
+            <input type="text" class="form-control" id="direccion" name="direccion" required>
+        </div>
+
+        <div class="form-group">
+            <label for="codigoAcceso">Código de Acceso:</label>
+            <input type="text" class="form-control" id="codigoAcceso" name="codigoAcceso" required>
+        </div>
+
+        <div class="form-group">
+            <label for="telefono">Teléfono:</label>
+            <input type="text" class="form-control" id="telefono" name="telefono" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Crear cliente</button>
+    </form>
+    <a class="btn btn-secondary mt-3" href="{{ url_for('index') }}">Volver a la Lista de Clientes</a>
+</body>
+</html>
