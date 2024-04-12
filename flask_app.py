@@ -76,3 +76,61 @@ def editar_usuario(usuario_id):
 def eliminar_usuario(usuario_id):
     eliminarUsuario(usuario_id)
     return redirect(url_for('usuarios'))
+
+# Rutas para la página de pedidos
+@app.route('/pedidos')
+def listar_pedidos():
+    pedidos = cargar_datos_pedidos()
+    return render_template('pedidos.html', pedidos=pedidos)
+
+
+def obtener_cantidad_pedido_producto(pedido, producto_id):
+    """Obtener la cantidad de un producto en un pedido."""
+    for detalle in pedido.get("detalles", []):
+        if detalle["producto_id"] == producto_id:
+            return detalle["cantidad"]
+    return 0
+
+@app.route('/pedidos/nuevo', methods=['GET', 'POST'])
+def crear_pedido_route():
+    clientes = obtener_clientes()
+    productos = obtener_productos()
+
+    if request.method == 'POST':
+        nuevo_pedido = {
+            "idCliente": int(request.form.get('idCliente')),
+            "descripcionPedido": request.form.get('descripcion'),
+            "comentarios":request.form.get('comentarios'),
+            "fechaEntrega": request.form.get('fechaEntrega'),
+            "fechaRecoger": request.form.get('fechaRecoger'),
+            "estado": "pendiente",
+            "total": float(request.form.get('total'))
+        }
+        print(nuevo_pedido['comentarios'])
+        crear_pedido(nuevo_pedido)
+        generar_pdf(nuevo_pedido['idCliente'],nuevo_pedido['descripcionPedido'],nuevo_pedido['total'],nuevo_pedido['fechaEntrega'],nuevo_pedido['fechaRecoger'])
+
+    return render_template('formulario_pedido.html', clientes=clientes, productos=productos)
+
+def actualizar_inventario_pedido(formulario, productos):
+    """Actualizar el inventario al procesar un nuevo pedido."""
+    try:
+        for producto in productos:
+            cantidad_pedido = int(formulario.get(f'cantidad_{producto["id"]}', 0))
+            if cantidad_pedido > 0:
+                cantidad_disponible = producto["cantidad"]
+                if cantidad_pedido > cantidad_disponible:
+                    # Si no hay suficiente cantidad disponible, abortar la actualización
+                    return False
+                else:
+                    # Restar la cantidad pedida del inventario
+                    producto["cantidad"] -= cantidad_pedido
+
+        # Guardar los cambios en el archivo de inventario
+        guardar_datos_inventario(productos)
+        return True
+
+    except Exception as e:
+        # Manejar cualquier excepción que pueda ocurrir durante la actualización del inventario
+        print(f"Error al actualizar el inventario: {str(e)}")
+        return False
