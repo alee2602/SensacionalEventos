@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <title>Pedidos</title>
+</head>
+<body class="container mt-4">
+    <h1 class="mb-4">Pedidos</h1>
+
+    <!-- Agregamos un campo de búsqueda -->
+    <div class="form-group">
+        <label for="searchOrder">Buscar Pedido:</label>
+        <input type="text" class="form-control" id="searchOrder" placeholder="Ingrese el ID del pedido o descripción">
+    </div>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">ID Pedido</th>
+                <th scope="col">ID Cliente</th>
+                <th scope="col">Descripción</th>
+                <th scope="col">Comentarios</th>
+                <th scope="col">Fecha Entrega</th>
+                <th scope="col">Fecha Recoger</th>
+                <th scope="col">Estado</th>
+                <th scope="col">Total</th>
+                <th scope="col">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for pedido in pedidos %}
+                <tr>
+                    <th scope="row">{{ pedido.idPedido }}</th>
+                    <td>{{ pedido.idCliente }}</td>
+                    <td>{{ pedido.descripcionPedido }}</td>
+                    <td>{{ pedido.comentarios }}</td>
+                    <td>{{ pedido.fechaEntrega }}</td>
+                    <td>{{ pedido.fechaRecoger }}</td>
+                    <td>{{ pedido.estado }}</td>
+                    <td>{{ pedido.total }}</td>
+                    <td>
+                        <a href="{{ url_for('editar_pedido_route', pedido_id=pedido.idPedido) }}" class="btn btn-warning btn-sm">Editar</a>
+                        <a href="{{ url_for('eliminar_pedido_route', pedido_id=pedido.idPedido) }}" class="btn btn-danger btn-sm ml-2">Eliminar</a>
+                        <form action="{{ url_for('cambiar_estado_pedido_route', pedido_id=pedido.idPedido) }}" method="post" style="display: inline;">
+                            <button type="submit" class="btn btn-success btn-sm ml-2">Cambiar Estado</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a class="btn btn-primary mt-4" href="{{ url_for('crear_pedido_route') }}">Crear Nuevo Pedido</a>
+    <a class="btn btn-secondary mt-4" href="{{ url_for('index') }}">Volver al Menú Principal</a>
+
+    <!-- Agregamos script para la búsqueda en tiempo real -->
+    <script>
+        document.getElementById('searchOrder').addEventListener('input', function() {
+            var input, filter, table, tr, td, i, txtValue;
+            input = document.getElementById('searchOrder');
+            filter = input.value.toUpperCase();
+            table = document.querySelector('.table');
+            tr = table.getElementsByTagName('tr');
+
+            for (i = 1; i < tr.length; i++) {
+                var found = false;
+                for (var j = 0; j < tr[i].cells.length; j++) {
+                    td = tr[i].cells[j];
+                    if (td) {
+                        txtValue = td.textContent || td.innerText;
+                        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                            found = true;
+                            break;
+                        }
+                    }
+                }
+                tr[i].style.display = found ? '' : 'none';
+            }
+        });
+    </script>
+</body>
+</html>
