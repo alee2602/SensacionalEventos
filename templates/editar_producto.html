@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <title>Editar Producto</title>
+</head>
+<body class="container mt-4">
+    <h1 class="mb-4">Editar Producto</h1>
+    <form method="post" action="{{ url_for('editar_producto_route', producto_id=producto.id) }}">
+        <div class="form-group">
+            <label for="producto">Producto:</label>
+            <input type="text" class="form-control" id="producto" name="producto" value="{{ producto.producto }}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="marca">Marca:</label>
+            <input type="text" class="form-control" id="marca" name="marca" value="{{ producto.marca }}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="valor">Valor:</label>
+            <input type="text" class="form-control" id="valor" name="valor" value="{{ producto.valor }}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="precio">Precio:</label>
+            <input type="text" class="form-control" id="precio" name="precio" value="{{ producto.precio }}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="cantidad">Cantidad:</label>
+            <input type="text" class="form-control" id="cantidad" name="cantidad" value="{{ producto.cantidad }}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="comentarios">Comentarios:</label>
+            <textarea class="form-control" id="comentarios" name="comentarios" rows="3">{{ producto.comentarios }}</textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+    </form>
+    <a class="btn btn-secondary mt-3" href="{{ url_for('inventario') }}">Volver a la Lista de Productos</a>
+</body>
+</html>
