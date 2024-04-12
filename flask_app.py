@@ -223,3 +223,37 @@ def editar_producto_route(producto_id):
 def eliminar_producto_route(producto_id):
     eliminar_producto(producto_id)
     return redirect(url_for('inventario'))
+@app.route('/actualizar_inventario/<int:producto_id>/<int:cantidad>', methods=['POST'])
+def actualizar_inventario(producto_id, cantidad):
+    # Lógica para actualizar el inventario
+    inventario_file = "inventario.json"
+
+    try:
+        with open(inventario_file, 'r') as file:
+            inventario = json.load(file)
+
+        # Buscar el producto en el inventario
+        for producto in inventario:
+            if producto['id'] == producto_id:
+                if producto['cantidad'] >= cantidad:
+                    producto['cantidad'] -= cantidad
+                    # Guardar los cambios en el archivo
+                    with open(inventario_file, 'w') as file:
+                        json.dump(inventario, file, indent=2)
+                    return jsonify({'success': True, 'message': 'Inventario actualizado correctamente'})
+                else:
+                    return jsonify({'success': False, 'message': 'No hay suficiente cantidad en el inventario'})
+        
+        return jsonify({'success': False, 'message': 'Producto no encontrado en el inventario'})
+
+    except FileNotFoundError:
+        return jsonify({'success': False, 'message': 'El archivo de inventario no existe'})
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)})
+
+
+
+# Resto del código...
+
+if __name__ == '__main__':
+    app.run(debug=True)
