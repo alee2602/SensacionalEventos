@@ -41,3 +41,29 @@ def obtener_producto_por_id(producto_id):
         if item["id"] == producto_id:
             return item
     return None
+
+def eliminar_producto(producto_id):
+    """Eliminar un producto por su ID."""
+    datos = cargar_datos()
+    for i, item in enumerate(datos):
+        if item["id"] == producto_id:
+            del datos[i]
+            guardar_datos(datos)
+            return True
+    return False
+
+def crear_producto(datos):
+    """Crear un nuevo producto."""
+    nuevo_id = obtener_ultimo_id(cargar_datos()) + 1
+    producto = {
+        "id": nuevo_id,
+        "producto": datos['producto'],
+        "marca": datos['marca'],
+        "valor": float(datos['valor']),
+        "precio": float(datos['precio']),
+        "cantidad": int(datos['cantidad']),
+        "comentarios": datos['comentarios']
+    }
+    datos = cargar_datos()
+    datos.append(producto)
+    guardar_datos(datos)
