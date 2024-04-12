@@ -1,0 +1,22 @@
+[
+    {
+      "idPedido": 1,
+      "idCliente": 1,
+      "comentarios": "Purbea",
+      "descripcionPedido": "vaso:20---plato:15",
+      "fechaEntrega": "2024-01-13",
+      "fechaRecoger": "2024-01-15",
+      "estado": "pendiente",
+      "total": 65.0
+    },
+    {
+      "idPedido": 2,
+      "idCliente": 1,
+      "comentarios": "j",
+      "descripcionPedido": "shaffing:50---vaso:20",
+      "fechaEntrega": "2024-01-17",
+      "fechaRecoger": "2024-01-19",
+      "estado": "pendiente",
+      "total": 100.0
+    }
+  ]
