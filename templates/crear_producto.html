@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <title>Crear Nuevo Producto</title>
+</head>
+<body class="container mt-4">
+    <h1 class="mb-4">Crear Nuevo Producto</h1>
+
+    <form action="{{ url_for('crear_producto_route') }}" method="post">
+        <div class="form-group">
+            <label for="producto">Producto:</label>
+            <input type="text" class="form-control" id="producto" name="producto" required>
+        </div>
+        <div class="form-group">
+            <label for="marca">Marca:</label>
+            <input type="text" class="form-control" id="marca" name="marca" required>
+        </div>
+        <div class="form-group">
+            <label for="valor">Valor:</label>
+            <input  class="form-control" id="valor" name="valor" required>
+        </div>
+        <div class="form-group">
+            <label for="precio">Precio:</label>
+            <input  class="form-control" id="precio" name="precio" required>
+        </div>
+        <div class="form-group">
+            <label for="cantidad">Cantidad:</label>
+            <input type="number" class="form-control" id="cantidad" name="cantidad" required>
+        </div>
+        <div class="form-group">
+            <label for="comentarios">Comentarios:</label>
+            <textarea class="form-control" id="comentarios" name="comentarios" rows="3"></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-success">Crear Producto</button>
+    </form>
+
+    <a class="btn btn-secondary mt-4" href="{{ url_for('index') }}">Volver al Menú Principal</a>
+</body>
+</html>
