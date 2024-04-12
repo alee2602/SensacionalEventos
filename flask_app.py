@@ -134,3 +134,92 @@ def actualizar_inventario_pedido(formulario, productos):
         # Manejar cualquier excepción que pueda ocurrir durante la actualización del inventario
         print(f"Error al actualizar el inventario: {str(e)}")
         return False
+def generar_descripcion_pedido(formulario, productos):
+    """Generar la descripción del pedido a partir del formulario."""
+    detalles = []
+    for producto in productos:
+        cantidad = int(formulario.get(f'cantidad_{producto["id"]}', 0))
+        if cantidad > 0:
+            detalles.append({
+                "producto_id": producto["id"],
+                "producto_nombre": producto["nombre"],
+                "cantidad": cantidad,
+                "precio_unitario": producto["precio"]
+            })
+
+    return json.dumps(detalles)
+
+def calcular_total_pedido(formulario, productos):
+    """Calcular el total del pedido a partir del formulario."""
+    total = 0
+    for producto in productos:
+        cantidad = int(formulario.get(f'cantidad_{producto["id"]}', 0))
+        total += cantidad * producto["precio"]
+
+    return total
+@app.route('/pedidos/editar/<int:pedido_id>', methods=['GET', 'POST'])
+def editar_pedido_route(pedido_id):
+    clientes = obtener_clientes()
+    pedido = obtener_pedido_por_id(pedido_id)
+    if not pedido:
+        return 'Pedido no encontrado', 404
+
+    if request.method == 'POST':
+        nuevos_datos = {
+            "idCliente": int(request.form.get('idCliente')),
+            "descripcionPedido": request.form.get('descripcion'),
+            "comentarios":request.form.get('comentarios'),
+            "fechaEntrega": request.form.get('fechaEntrega'),
+            "fechaRecoger": request.form.get('fechaRecoger'),
+            "estado": "pendiente",
+            "total": float(request.form.get('total'))
+        }
+        editar_pedido(pedido_id, nuevos_datos)
+        return redirect(url_for('listar_pedidos'))
+    else:
+        return render_template('formulario_pedido.html', pedido=pedido, clientes=clientes)
+
+@app.route('/pedidos/eliminar/<int:pedido_id>')
+def eliminar_pedido_route(pedido_id):
+    if eliminar_pedido(pedido_id):
+        return redirect(url_for('listar_pedidos'))
+    else:
+        return 'Pedido no encontrado', 404
+@app.route('/crear_producto', methods=['GET', 'POST'])
+def crear_producto_route():
+    if request.method == 'POST':
+        datos_producto = {
+            'producto': request.form['producto'],
+            'marca': request.form['marca'],
+            'valor': float(request.form['valor']),
+            'precio': float(request.form['precio']),
+            'cantidad': request.form['cantidad'],
+            'comentarios': request.form['comentarios']
+        }
+        crear_producto(datos_producto)
+        return redirect(url_for('inventario'))
+
+    return render_template('crear_producto.html')
+
+@app.route('/editar_producto/<int:producto_id>', methods=['GET', 'POST'])
+def editar_producto_route(producto_id):
+    producto = obtener_producto_por_id(producto_id)
+
+    if request.method == 'POST':
+        nuevos_datos = {
+            'producto': request.form['producto'],
+            'marca': request.form['marca'],
+            'valor': request.form['valor'],
+            'precio': request.form['precio'],
+            'cantidad': request.form['cantidad'],
+            'comentarios': request.form['comentarios']
+        }
+        editar_producto(producto_id, nuevos_datos)
+        return redirect(url_for('inventario'))
+
+    return render_template('editar_producto.html', producto=producto)
+
+@app.route('/eliminar_producto/<int:producto_id>')
+def eliminar_producto_route(producto_id):
+    eliminar_producto(producto_id)
+    return redirect(url_for('inventario'))
