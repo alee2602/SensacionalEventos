@@ -34,3 +34,35 @@ def editarUsuario(usuario_id, nuevos_datos):
             guardar_datos(datos)
             return True
     return False
+
+def obtener_usuario_por_id(usuario_id):
+    """Obtener un usuario por su ID."""
+    datos = cargar_datos()
+    for usuario in datos:
+        if usuario["id"] == usuario_id:
+            return usuario
+    return None
+def eliminarUsuario(usuario_id):
+    """Eliminar un usuario por su ID."""
+    datos = cargar_datos()
+    for i, usuario in enumerate(datos):
+        if usuario["id"] == usuario_id:
+            del datos[i]
+            guardar_datos(datos)
+            return True
+    return False
+
+def crear_usuario(datos):
+    """Crear un nuevo usuario."""
+    nuevo_id = obtener_ultimo_id() + 1
+    usuario = {
+        "id": nuevo_id,
+        "nombre": datos['nombre'],
+        "apellido": datos['apellido'],
+        "direccion": datos['direccion'],
+        "codigoAcceso": datos['codigoAcceso'],
+        "telefono": datos['telefono']
+    }
+    datos = cargar_datos()
+    datos.append(usuario)
+    guardar_datos(datos)
