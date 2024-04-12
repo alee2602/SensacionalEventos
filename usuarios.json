@@ -1,0 +1,18 @@
+[
+    {
+    "id": 1,
+    "nombre": "Mauricio",
+    "apellido": "Lemus",
+    "direccion": "5a",
+    "codigoAcceso": "01057",
+    "telefono": "+50230426422"
+    },
+    {
+    "id": 3,
+    "nombre": "karina",
+    "apellido": "guzman",
+    "direccion": "10a avenida 1-20",
+    "codigoAcceso": "0000",
+    "telefono": "49400987"
+    }
+]
