@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
+    <title>Formulario de Pedido</title>
+  </head>
+  <body class="container mt-4">
+    <h1 class="mb-4">Formulario de Pedido</h1>
+
+    <form action="{{ url_for('crear_pedido_route') }}" method="post">
+      <!-- Campo de Cliente (Seleccionar cliente) -->
+      <div class="form-group">
+        <label for="cliente">Cliente:</label>
+        <select class="form-control" id="cliente" name="idCliente">
+          {% for usuario in clientes %}
+          <option value="{{ usuario.id }}">
+            {{ usuario.nombre }} {{ usuario.apellido }}
+          </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- Carrito de Compras -->
+      <div class="form-group">
+        <label for="productos">Productos:</label>
+        <table class="table" id="productos">
+          <thead>
+            <tr>
+              <th>Producto</th>
+              <th>Cantidad</th>
+              <th>Precio Unitario</th>
+              <th>Total</th>
+              <th>Acciones</th>
+              <!-- Nueva columna para botón de eliminar -->
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Aquí se agregarán dinámicamente las filas del carrito -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Agregar productos al carrito -->
+      <div class="form-group">
+        <label for="producto">Agregar Producto:</label>
+        <select class="form-control" id="producto">
+          {% for producto in productos %}
+          <option
+            value="{{ producto.id }}"
+            data-precio="{{ producto.precio }}"
+            data-cantidad="{{ producto.cantidad }}"
+          >
+            {{ producto.producto }}
+          </option>
+          {% endfor %}
+        </select>
+        <input
+          type="number"
+          class="form-control"
+          id="cantidad"
+          placeholder="Cantidad"
+        />
+        <button
+          type="button"
+          class="btn btn-primary"
+          onclick="agregarProducto()"
+        >
+          Agregar al Carrito
+        </button>
+      </div>
+
+      <!-- Campo de Fechas y Comentarios -->
+      <div class="form-group">
+        <label for="fechaEntrega">Fecha de Entrega:</label>
+        <input
+          type="date"
+          class="form-control"
+          id="fechaEntrega"
+          name="fechaEntrega"
+          required
+        />
+      </div>
+      <div class="form-group">
+        <label for="fechaRecoger">Fecha de Recoger:</label>
+        <input
+          type="date"
+          class="form-control"
+          id="fechaRecoger"
+          name="fechaRecoger"
+          required
+        />
+      </div>
+      <div class="form-group">
+        <label for="comentarios">Comentarios:</label>
+        <textarea
+          class="form-control"
+          id="comentarios"
+          name="comentarios"
+          rows="3"
+        ></textarea>
+      </div>
+
+      <!-- Total -->
+      <div class="form-group">
+        <label for="total">Total:</label>
+        <input
+          type="text"
+          class="form-control"
+          id="total"
+          name="total"
+          readonly
+        />
+      </div>
+      <!-- Descripcion -->
+      <div class="form-group">
+        <label for="descripion">Descripcion:</label>
+        <input
+          type="text"
+          class="form-control"
+          id="descripcion"
+          name="descripcion"
+          readonly
+        />
+      </div>
+
+      <!-- Botón para enviar el formulario -->
+      <button type="submit" class="btn btn-success">Crear Pedido</button>
+    </form>
+
+    <a class="btn btn-secondary mt-4" href="{{ url_for('index') }}"
+      >Volver al Menú Principal</a
+    >
+
+    <!-- Script para manejar la lógica del carrito -->
+    <script>
+      var indexCounter = 0;
+
+      function concatenarProducto() {
+    var descripcionInput = document.getElementById('descripcion');
+    var productosTable = document.getElementById('productos');
+    var descripcionPedido = '';
+
+    for (var i = 1; i < productosTable.rows.length; i++) {
+        var producto = productosTable.rows[i].cells[0].innerText;
+        var cantidad = productosTable.rows[i].cells[1].innerText;
+
+        descripcionPedido += producto + ':' + cantidad;
+
+        if (i < productosTable.rows.length - 1) {
+            descripcionPedido += '---'; // Agregar separador entre productos
+        }
+    }
+
+    descripcionInput.value = descripcionPedido;
+}
+      function agregarProducto() {
+        var productoSelect = document.getElementById("producto");
+        var cantidadInput = document.getElementById("cantidad");
+        var productosTable = document.getElementById("productos");
+
+        var selectedOption =
+          productoSelect.options[productoSelect.selectedIndex];
+        var producto = selectedOption.text;
+        var cantidad = parseInt(cantidadInput.value);
+        var precioUnitario = parseFloat(
+          selectedOption.getAttribute("data-precio")
+        );
+
+        // Validar la cantidad disponible
+        var cantidadDisponible = parseInt(
+          selectedOption.getAttribute("data-cantidad")
+        );
+        if (isNaN(cantidad) || cantidad <= 0 || cantidad > cantidadDisponible) {
+          alert("Cantidad inválida o no disponible.");
+          return;
+        }
+
+        // Agregar el producto al carrito y a la lista de productos
+        var total = cantidad * precioUnitario;
+        var row = productosTable.insertRow(-1);
+        row.innerHTML = `<td>${producto}</td><td>${cantidad}</td><td>${precioUnitario}</td><td>${total.toFixed(
+          2
+        )}</td>`;
+
+        // Agregar el índice a la fila
+        row.setAttribute("data-index", indexCounter++);
+
+        // Agregar botón Eliminar a la nueva fila del carrito
+        var deleteButtonCell = row.insertCell(4);
+        var deleteButton = document.createElement("button");
+        deleteButton.type = "button";
+        deleteButton.classList.add("btn", "btn-danger");
+        deleteButton.innerHTML = "Eliminar";
+        deleteButton.onclick = function () {
+          eliminarProducto(row);
+        };
+
+        deleteButtonCell.appendChild(deleteButton);
+
+        var editButton = document.createElement('button');
+editButton.type = 'button';
+editButton.classList.add('btn', 'btn-warning');
+editButton.innerHTML = 'Editar';
+editButton.onclick = function () {
+    editarProducto(row);
+};
+
+row.insertCell(5).appendChild(editButton);
+
+        // Actualizar el total general
+        concatenarProducto()
+        actualizarTotal();
+      }
+
+      function actualizarTotal() {
+        var productosTable = document.getElementById("productos");
+        var totalInput = document.getElementById("total");
+        var total = 0;
+
+        for (var i = 1; i < productosTable.rows.length; i++) {
+          total += parseFloat(productosTable.rows[i].cells[3].innerText);
+        }
+
+        totalInput.value = total.toFixed(2);
+      }
+      function eliminarProducto(row) {
+        var productosTable = document.getElementById("productos");
+
+        // Obtener el índice de la fila
+        var rowIndex = parseInt(row.getAttribute("data-index"));
+
+        
+
+        // Eliminar la fila
+        productosTable.deleteRow(row.rowIndex);
+        // Actualizar el total general
+        actualizarTotal();
+        concatenarProducto()
+      }
+      function editarProducto(row) {
+    var productosTable = document.getElementById('productos');
+    
+    var cantidadInput = row.cells[1];
+    var cantidadAnterior = parseInt(cantidadInput.innerText);
+    
+    var nuevaCantidad = prompt('Editar cantidad:', cantidadAnterior);
+    
+    if (nuevaCantidad !== null && nuevaCantidad !== '') {
+        nuevaCantidad = parseInt(nuevaCantidad);
+        
+        if (!isNaN(nuevaCantidad) && nuevaCantidad > 0) {
+            cantidadInput.innerText = nuevaCantidad;
+            // Actualizar la descripción y el total general
+            concatenarProducto();
+            actualizarTotal();
+        } else {
+            alert('Cantidad inválida. La cantidad debe ser un número entero mayor que 0.');
+        }
+    }
+}
+
+    </script>
+  </body>
+</html>
