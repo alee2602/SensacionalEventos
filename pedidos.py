@@ -71,7 +71,7 @@ def eliminar_pedido(id_pedido):
     return False
 def obtener_clientes():
     """Obtener la lista de clientes."""
-    with open("usuarios.json", "r") as archivo_clientes:
+    with open("clientes.json", "r") as archivo_clientes:
         clientes = json.load(archivo_clientes)
     return clientes
 def obtener_productos():

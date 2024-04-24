@@ -7,7 +7,7 @@ from clientes import cargar_datos
 import json
 
 def obtener_informacion_por_id(id_buscado):
-    with open('usuarios.json', 'r') as archivo:
+    with open('clientes.json', 'r') as archivo:
         usuarios = json.load(archivo)
 
     for usuario in usuarios:

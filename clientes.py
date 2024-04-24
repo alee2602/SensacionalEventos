@@ -1,7 +1,7 @@
 import json
 import os
 
-archivo_json = "usuarios.json"
+archivo_json = "clientes.json"
 
 def cargar_datos():
     """Cargar datos desde el archivo JSON."""
