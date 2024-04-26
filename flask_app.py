@@ -17,6 +17,8 @@ def index():
 def usuarios():
     usuarios = cargar_datos()
     return render_template('usuarios.html', usuarios=usuarios)
+    
+
 @app.route('/pedidos')
 def pedidos():
     # Cargar datos de pedidos.json
@@ -39,7 +41,7 @@ def crear_usuario_route():
             'nombre': request.form['nombre'],
             'apellido': request.form['apellido'],
             'direccion': request.form['direccion'],
-            'codigoAcceso': request.form['codigoAcceso'],
+            'codigo_acceso': request.form['codigoAcceso'],
             'telefono': request.form['telefono']
         }
         crear_usuario(datos_usuario)
@@ -64,7 +66,7 @@ def editar_usuario(usuario_id):
             'nombre': request.form['nombre'],
             'apellido': request.form['apellido'],
             'direccion': request.form['direccion'],
-            'codigoAcceso': request.form['codigoAcceso'],
+            'codigo_acceso': request.form['codigoAcceso'],
             'telefono': request.form['telefono']
         }
         editarUsuario(usuario_id, nuevos_datos)
@@ -81,8 +83,8 @@ def eliminar_usuario(usuario_id):
 @app.route('/pedidos')
 def listar_pedidos():
     pedidos = cargar_datos_pedidos()
+    print(pedidos)
     return render_template('pedidos.html', pedidos=pedidos)
-
 
 def obtener_cantidad_pedido_producto(pedido, producto_id):
     """Obtener la cantidad de un producto en un pedido."""
@@ -98,7 +100,7 @@ def crear_pedido_route():
 
     if request.method == 'POST':
         nuevo_pedido = {
-            "idCliente": int(request.form.get('idCliente')),
+            "id_cliente": int(request.form.get('idCliente')),
             "descripcionPedido": request.form.get('descripcion'),
             "comentarios":request.form.get('comentarios'),
             "fechaEntrega": request.form.get('fechaEntrega'),
@@ -108,7 +110,7 @@ def crear_pedido_route():
         }
         print(nuevo_pedido['comentarios'])
         crear_pedido(nuevo_pedido)
-        generar_pdf(nuevo_pedido['idCliente'],nuevo_pedido['descripcionPedido'],nuevo_pedido['total'],nuevo_pedido['fechaEntrega'],nuevo_pedido['fechaRecoger'])
+        generar_pdf(nuevo_pedido['id_cliente'],nuevo_pedido['descripcionPedido'],nuevo_pedido['total'],nuevo_pedido['fechaEntrega'],nuevo_pedido['fechaRecoger'])
 
     return render_template('formulario_pedido.html', clientes=clientes, productos=productos)
 

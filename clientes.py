@@ -5,7 +5,7 @@ from sqlalchemy.orm import sessionmaker
 from db.dbconnection import Cliente
 
 
-engine = create_engine('postgresql://postgres:16022004@localhost:5432/pythondb')
+engine = create_engine('postgresql://postgres:16022004@localhost:5432/sensacionaleventosdb')
 
 
 Session = sessionmaker(bind=engine)
@@ -35,31 +35,49 @@ def obtener_ultimo_id():
         return 0
     
 def editarUsuario(usuario_id, nuevos_datos):
-    """Editar los datos de un usuario por su ID."""
-    datos = cargar_datos()
-    for usuario in datos:
-        if usuario["id"] == usuario_id:
-            usuario.update(nuevos_datos)
-            guardar_datos(datos)
+    try:
+        cliente = session.query(Cliente).filter_by(id=usuario_id).first()
+        if cliente:
+            for key, value in nuevos_datos.items():
+                setattr(cliente, key, value)
+            session.commit()
+            print(f"Cliente con ID {usuario_id} editado correctamente.")
             return True
-    return False
+        else:
+            print(f"No se encontró un cliente con ID {usuario_id}.")
+            return False
+    except Exception as e:
+        session.rollback()  
+        print("Error al editar el cliente:", e)
+        return False
 
 def obtener_usuario_por_id(usuario_id):
-    """Obtener un usuario por su ID."""
-    datos = cargar_datos()
-    for usuario in datos:
-        if usuario["id"] == usuario_id:
-            return usuario
-    return None
+    try:
+        cliente = session.query(Cliente).filter_by(id=usuario_id).first()
+        if cliente:
+            return cliente  
+        else:
+            print(f"No se encontró un cliente con ID {usuario_id}.")
+            return None
+    except Exception as e:
+        print("Error al obtener el cliente por ID:", e)
+        return None
+    
 def eliminarUsuario(usuario_id):
-    """Eliminar un usuario por su ID."""
-    datos = cargar_datos()
-    for i, usuario in enumerate(datos):
-        if usuario["id"] == usuario_id:
-            del datos[i]
-            guardar_datos(datos)
+    try:
+        cliente = session.query(Cliente).filter_by(id=usuario_id).first()
+        if cliente:
+            session.delete(cliente)
+            session.commit()
+            print(f"Cliente con ID {usuario_id} eliminado correctamente.")
             return True
-    return False
+        else:
+            print(f"No se encontró un cliente con ID {usuario_id}.")
+            return False
+    except Exception as e:
+        session.rollback()  
+        print("Error al eliminar el cliente:", e)
+        return False
 
 def crear_usuario(datos_cliente):
     try:
@@ -69,6 +87,6 @@ def crear_usuario(datos_cliente):
         print("Cliente creado exitosamente.")
         return nuevo_cliente
     except Exception as e:
-        session.rollback()  # Revierte los cambios en caso de error
+        session.rollback()  
         print("Error al crear el cliente:", e)
         return None

@@ -1,15 +1,24 @@
 import json
 import os
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from db.dbconnection import Inventario
+
+
+engine = create_engine('postgresql://postgres:16022004@localhost:5432/sensacionaleventosdb')
+
+
+Session = sessionmaker(bind=engine)
+session = Session()
 
 archivo_json = "inventario.json"
 
 def cargar_datos():
-    """Cargar datos desde el archivo JSON."""
-    if os.path.exists(archivo_json) and os.path.getsize(archivo_json) > 0:
-        with open(archivo_json, "r") as archivo:
-            datos = json.load(archivo)
-        return datos
-    else:
+    try:
+        inventario = session.query(Inventario).all()
+        return inventario
+    except Exception as e:
+        print("Error al obtener el inventario:", e)
         return []
 
 def guardar_datos(datos):
@@ -25,45 +34,58 @@ def obtener_ultimo_id(datos):
         return 0
 
 def editar_producto(producto_id, nuevos_datos):
-    """Editar los datos de un producto por su ID."""
-    datos = cargar_datos()
-    for item in datos:
-        if item["id"] == producto_id:
-            item.update(nuevos_datos)
-            guardar_datos(datos)
+    try:
+        producto = session.query(Inventario).filter_by(id=producto_id).first()
+        if producto:
+            for key, value in nuevos_datos.items():
+                setattr(producto, key, value)
+            session.commit()
+            print(f"Producto con ID {producto_id} editado correctamente.")
             return True
-    return False
+        else:
+            print(f"No se encontró un producto con ID {producto_id}.")
+            return False
+    except Exception as e:
+        session.rollback()  
+        print("Error al editar el producto:", e)
+        return False
 
 def obtener_producto_por_id(producto_id):
-    """Obtener un producto por su ID."""
-    datos = cargar_datos()
-    for item in datos:
-        if item["id"] == producto_id:
-            return item
-    return None
+    try:
+        producto = session.query(Inventario).filter_by(id=producto_id).first()
+        if producto:
+            return producto  
+        else:
+            print(f"No se encontró un producto con ID {producto_id}.")
+            return None
+    except Exception as e:
+        print("Error al obtener el producto por ID:", e)
+        return None
 
 def eliminar_producto(producto_id):
-    """Eliminar un producto por su ID."""
-    datos = cargar_datos()
-    for i, item in enumerate(datos):
-        if item["id"] == producto_id:
-            del datos[i]
-            guardar_datos(datos)
+    try:
+        producto = session.query(Inventario).filter_by(id=producto_id).first()
+        if producto:
+            session.delete(producto)
+            session.commit()
+            print(f"Producto con ID {producto_id} eliminado correctamente.")
             return True
-    return False
+        else:
+            print(f"No se encontró un producto con ID {producto_id}.")
+            return False
+    except Exception as e:
+        session.rollback()  
+        print("Error al eliminar el producto:", e)
+        return False
 
-def crear_producto(datos):
-    """Crear un nuevo producto."""
-    nuevo_id = obtener_ultimo_id(cargar_datos()) + 1
-    producto = {
-        "id": nuevo_id,
-        "producto": datos['producto'],
-        "marca": datos['marca'],
-        "valor": float(datos['valor']),
-        "precio": float(datos['precio']),
-        "cantidad": int(datos['cantidad']),
-        "comentarios": datos['comentarios']
-    }
-    datos = cargar_datos()
-    datos.append(producto)
-    guardar_datos(datos)
+def crear_producto(datos_producto):
+    try:
+        nuevo_producto = Inventario(**datos_producto)
+        session.add(nuevo_producto)
+        session.commit()
+        print("Cliente creado exitosamente.")
+        return nuevo_producto
+    except Exception as e:
+        session.rollback()  
+        print("Error al crear el cliente:", e)
+        return None

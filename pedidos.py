@@ -1,15 +1,24 @@
 import json
 import os
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from db.dbconnection import Pedidos
+
+
+engine = create_engine('postgresql://postgres:16022004@localhost:5432/sensacionaleventosdb')
+
+
+Session = sessionmaker(bind=engine)
+session = Session()
 
 archivo_pedidos = "pedidos.json"
 
 def cargar_datos_pedidos():
-    """Cargar datos desde el archivo JSON de pedidos."""
-    if os.path.exists(archivo_pedidos) and os.path.getsize(archivo_pedidos) > 0:
-        with open(archivo_pedidos, "r") as archivo:
-            datos = json.load(archivo)
-        return datos
-    else:
+    try:
+        pedidos = session.query(Pedidos).all()
+        return pedidos
+    except Exception as e:
+        print("Error al obtener el inventario:", e)
         return []
 
 def guardar_datos_pedidos(datos):
@@ -26,49 +35,62 @@ def obtener_ultimo_id_pedidos():
         return 0
 
 def crear_pedido(datos_pedido):
-    """Crear un nuevo pedido."""
-    nuevo_id = obtener_ultimo_id_pedidos() + 1
-    pedido = {
-        "idPedido": nuevo_id,
-        "idCliente": datos_pedido["idCliente"],
-        "comentarios": datos_pedido["comentarios"],
-        "descripcionPedido": datos_pedido["descripcionPedido"],
-        "fechaEntrega": datos_pedido["fechaEntrega"],
-        "fechaRecoger": datos_pedido["fechaRecoger"],
-        "estado": datos_pedido["estado"],
-        "total": datos_pedido["total"]
-    }
-    datos = cargar_datos_pedidos()
-    datos.append(pedido)
-    guardar_datos_pedidos(datos)
+    try:
+        nuevo_pedido = Pedidos(**datos_pedido)
+        session.add(nuevo_pedido)
+        session.commit()
+        print("Pedido creado exitosamente.")
+        return nuevo_pedido
+    except Exception as e:
+        session.rollback()  
+        print("Error al crear el pedido:", e)
+        return None
 
 def editar_pedido(id_pedido, nuevos_datos):
-    """Editar los datos de un pedido por su ID."""
-    datos = cargar_datos_pedidos()
-    for pedido in datos:
-        if pedido["idPedido"] == id_pedido:
-            pedido.update(nuevos_datos)
-            guardar_datos_pedidos(datos)
+    try:
+        pedido = session.query(Pedidos).filter_by(id=id_pedido).first()
+        if pedido:
+            for key, value in nuevos_datos.items():
+                setattr(pedido, key, value)
+            session.commit()
+            print(f"Pedido con ID {id_pedido} editado correctamente.")
             return True
-    return False
+        else:
+            print(f"No se encontró un pedido con ID {id_pedido}.")
+            return False
+    except Exception as e:
+        session.rollback()  
+        print("Error al editar el pedido:", e)
+        return False
 
 def obtener_pedido_por_id(id_pedido):
-    """Obtener un pedido por su ID."""
-    datos = cargar_datos_pedidos()
-    for pedido in datos:
-        if pedido["idPedido"] == id_pedido:
-            return pedido
-    return None
+    try:
+        pedido = session.query(Pedidos).filter_by(id=id_pedido).first()
+        if pedido:
+            return pedido 
+        else:
+            print(f"No se encontró un pedido con ID {id_pedido}.")
+            return None
+    except Exception as e:
+        print("Error al obtener el pedido por ID:", e)
+        return None
 
 def eliminar_pedido(id_pedido):
-    """Eliminar un pedido por su ID."""
-    datos = cargar_datos_pedidos()
-    for i, pedido in enumerate(datos):
-        if pedido["idPedido"] == id_pedido:
-            del datos[i]
-            guardar_datos_pedidos(datos)
+    try:
+        pedido = session.query(Pedidos).filter_by(id=id_pedido).first()
+        if pedido:
+            session.delete(pedido)
+            session.commit()
+            print(f"Pedido con ID {id_pedido} eliminado correctamente.")
             return True
-    return False
+        else:
+            print(f"No se encontró un pedido con ID {id_pedido}.")
+            return False
+    except Exception as e:
+        session.rollback()  
+        print("Error al eliminar el pedido:", e)
+        return False
+
 def obtener_clientes():
     """Obtener la lista de clientes."""
     with open("clientes.json", "r") as archivo_clientes:
