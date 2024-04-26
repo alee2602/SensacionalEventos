@@ -1,15 +1,24 @@
 import json
 import os
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from db.dbconnection import Cliente
+
+
+engine = create_engine('postgresql://postgres:16022004@localhost:5432/pythondb')
+
+
+Session = sessionmaker(bind=engine)
+session = Session()
 
 archivo_json = "clientes.json"
 
 def cargar_datos():
-    """Cargar datos desde el archivo JSON."""
-    if os.path.exists(archivo_json) and os.path.getsize(archivo_json) > 0:
-        with open(archivo_json, "r") as archivo:
-            datos = json.load(archivo)
-        return datos
-    else:
+    try:
+        clientes = session.query(Cliente).all()
+        return clientes
+    except Exception as e:
+        print("Error al obtener los clientes:", e)
         return []
 
 def guardar_datos(datos):
@@ -52,17 +61,14 @@ def eliminarUsuario(usuario_id):
             return True
     return False
 
-def crear_usuario(datos):
-    """Crear un nuevo usuario."""
-    nuevo_id = obtener_ultimo_id() + 1
-    usuario = {
-        "id": nuevo_id,
-        "nombre": datos['nombre'],
-        "apellido": datos['apellido'],
-        "direccion": datos['direccion'],
-        "codigoAcceso": datos['codigoAcceso'],
-        "telefono": datos['telefono']
-    }
-    datos = cargar_datos()
-    datos.append(usuario)
-    guardar_datos(datos)
+def crear_usuario(datos_cliente):
+    try:
+        nuevo_cliente = Cliente(**datos_cliente)
+        session.add(nuevo_cliente)
+        session.commit()
+        print("Cliente creado exitosamente.")
+        return nuevo_cliente
+    except Exception as e:
+        session.rollback()  # Revierte los cambios en caso de error
+        print("Error al crear el cliente:", e)
+        return None
