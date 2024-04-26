@@ -4,6 +4,7 @@ from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image
 from clientes import cargar_datos
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image, Table, TableStyle
 import json
 
 def obtener_informacion_por_id(id_buscado):
@@ -17,7 +18,7 @@ def obtener_informacion_por_id(id_buscado):
     return None  # Retorna None si no se encuentra el usuario con el ID especificado
 
 def generar_pdf(nombre_cliente, descripcion_pedido, total, fecha_entrega, fecha_recoger):
-    inforCliente=obtener_informacion_por_id(nombre_cliente)
+    inforCliente = obtener_informacion_por_id(nombre_cliente)
 
     # Ruta donde se guardará el PDF
     ruta_pdf = f"reportes/{inforCliente['nombre'].replace(' ', '_')}_pedido.pdf"
@@ -28,18 +29,19 @@ def generar_pdf(nombre_cliente, descripcion_pedido, total, fecha_entrega, fecha_
     # Configurar el estilo del documento
     estilos = getSampleStyleSheet()
     estilo_normal = estilos['Normal']
-    estilo_titulo = estilos['Heading1']
-
-    # Configurar el logo
-    logo_path = "logo.png"
-    logo = Image(logo_path, width=100, height=100)
+    estilo_bold = estilos['Normal']
+    estilo_bold.fontName = 'Helvetica-Bold'
 
     # Crear el contenido del PDF
     contenido = []
+
+    # Logo
+    logo_path = "logo.png"
+    logo = Image(logo_path, width=100, height=100)
     contenido.append(logo)
 
     # Título
-    contenido.append(Paragraph("Pedido - Sensacional Eventos", estilo_titulo))
+    contenido.append(Paragraph("Pedido - Sensacional Eventos", estilo_bold))
 
     # Información del Cliente
     contenido.append(Spacer(1, 12))
@@ -68,5 +70,3 @@ def generar_pdf(nombre_cliente, descripcion_pedido, total, fecha_entrega, fecha_
     pdf.build(contenido)
 
     print(f"PDF generado y guardado en: {ruta_pdf}")
-
-
