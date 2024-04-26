@@ -9,10 +9,28 @@ from pdf import generar_pdf
 app = Flask(__name__)
 Bootstrap(app)
 
-@app.route('/')
+@app.route('/index')
 def index():
     return render_template('index.html')
+@app.route('/', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        print(username)
+        print(password)
 
+        # Verificar las credenciales del usuario en la base de datos
+        #usuario = verificar_credenciales(username, password)
+
+        if (username=="admin" and password=="admin"):
+            print("si")    
+            return render_template('index.html')  # Redirigir a la página index.html
+        else:
+            # Si las credenciales son incorrectas, mostrar un mensaje de error
+            flash('Credenciales incorrectas. Por favor, inténtalo de nuevo.', 'error')
+
+    return render_template('login.html')
 @app.route('/usuarios')
 def usuarios():
     usuarios = cargar_datos()
