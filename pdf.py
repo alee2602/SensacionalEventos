@@ -25,6 +25,20 @@ def generar_pdf(nombre_cliente, descripcion_pedido, total, fecha_entrega, fecha_
     # Crear un objeto PDF
     pdf = SimpleDocTemplate(ruta_pdf, pagesize=letter)
 
+    estilo_normal = ParagraphStyle(
+        name='Normal',
+        fontName='Helvetica',
+        fontSize=12,
+        textColor=colors.black
+    )
+
+    estilo_titulo = ParagraphStyle(
+        name='Titulo',
+        fontName='Times-Bold',
+        fontSize=18,
+        textColor=colors.blue
+    )
+
     # Configurar el estilo del documento
     estilos = getSampleStyleSheet()
     estilo_normal = estilos['Normal']
@@ -36,10 +50,25 @@ def generar_pdf(nombre_cliente, descripcion_pedido, total, fecha_entrega, fecha_
 
     # Crear el contenido del PDF
     contenido = []
+
+    # Configurar el fondo gris
+    def agregar_fondo(canvas, doc):
+        canvas.saveState()
+        canvas.setFillColor(colors.lightgrey)
+        canvas.rect(0, 0, doc.width, doc.height, fill=True, stroke=False)
+        canvas.restoreState()
+
+    # Asociar la función del fondo al PDF
+    pdf.beforePage = agregar_fondo
     contenido.append(logo)
 
     # Título
     contenido.append(Paragraph("Pedido - Sensacional Eventos", estilo_titulo))
+
+    logo.drawHeight = 50
+    logo.drawWidth = 50
+    contenido.append(logo)
+
 
     # Información del Cliente
     contenido.append(Spacer(1, 12))
