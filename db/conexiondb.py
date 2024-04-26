@@ -7,7 +7,7 @@ def crear_conexion():
         # Conexión a la base de datos PostgreSQL
         conexion = psycopg2.connect(
             user="postgres",
-            password="",
+            password="pelu1503",
             host="localhost",
             port="5432",
             database="sensacionaleventosdb"
@@ -32,6 +32,25 @@ def ejecutar_script(conexion, script_file):
             cursor.close()
             conexion.close()
             print("Conexion cerrada.")
+
+def verificar_credenciales(username, password):
+    try:
+        conexion=crear_conexion()
+        cursor = conexion.cursor()
+
+        # Consulta para verificar las credenciales del usuario
+        query = "SELECT * FROM usuarios WHERE username = %s AND password = %s"
+        cursor.execute(query, (username, password))
+        usuario = cursor.fetchone()
+
+        cursor.close()
+        conexion.close()
+
+        return usuario
+
+    except (Exception, Error) as error:
+        print("Error al verificar las credenciales:", error)
+        return None
 
 if __name__ == "__main__":
     conexion = crear_conexion()

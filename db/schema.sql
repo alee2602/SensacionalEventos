@@ -31,5 +31,17 @@ CREATE TABLE IF NOT EXISTS Pedidos (
     FOREIGN KEY (id_cliente) REFERENCES Clientes(id)
 );
 
+CREATE TABLE IF NOT EXISTS Roles(
+    id serial primary key,
+    nombre varchar(200)
+);
+CREATE TABLE IF NOT EXISTS Usuarios(
+    ID_Usuario serial primary key,
+    id_Rol integer not null, 
+    userName varchar(100),
+    password varchar(250),
+    FOREIGN KEY (id_Rol) REFERENCES Roles(id)
+);
+
 
 
