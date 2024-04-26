@@ -5,6 +5,7 @@ from inventario import cargar_datos as cargar_datos_inventario, guardar_datos as
 from inventario import obtener_ultimo_id as obtener_ultimo_id_inventario, crear_producto, obtener_producto_por_id, editar_producto, eliminar_producto
 from pedidos import  obtener_productos,obtener_clientes,cargar_datos_pedidos, editar_pedido,obtener_pedido_por_id,eliminar_pedido,guardar_datos_pedidos, obtener_ultimo_id_pedidos, crear_pedido, cambiar_estado_pedido
 import json
+from db.conexiondb import verificar_credenciales
 from pdf import generar_pdf
 app = Flask(__name__)
 Bootstrap(app)
