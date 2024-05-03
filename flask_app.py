@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for,jsonify,flash
+from flask import Flask, render_template, request, redirect, url_for,jsonify,flash,session
 from flask_bootstrap import Bootstrap
 from clientes import cargar_datos, guardar_datos, obtener_ultimo_id, crear_usuario,obtener_usuario_por_id,editarUsuario,eliminarUsuario
 from inventario import cargar_datos as cargar_datos_inventario, guardar_datos as guardar_datos_inventario
@@ -7,8 +7,15 @@ from pedidos import  obtener_productos,obtener_clientes,cargar_datos_pedidos, ed
 import json
 from db.conexiondb import verificar_credenciales
 from pdf import generar_pdf
-app = Flask(_name_)
+from functools import wraps
+import secrets
+
+app = Flask(__name__)
 Bootstrap(app)
+app.secret_key=secrets.token_hex(16)
+
+
+
 
 @app.route('/index')
 def index():
@@ -24,14 +31,14 @@ def login():
         # Verificar las credenciales del usuario en la base de datos
         #usuario = verificar_credenciales(username, password)
 
-        if (username=="admin" and password=="admin"):
+        if username == "admin" and password == "admin":
             print("si")    
-            return render_template('index.html')  # Redirigir a la página index.html
+            return render_template('index.html')
         else:
-            # Si las credenciales son incorrectas, mostrar un mensaje de error
-            flash('Credenciales incorrectas. Por favor, inténtalo de nuevo.', 'error')
-
+            return render_template('AuthError.html')  # Redirigir a la página AuthError.html
+        
     return render_template('login.html')
+
 @app.route('/usuarios')
 def usuarios():
     usuarios = cargar_datos()
@@ -274,5 +281,5 @@ def actualizar_inventario(producto_id, cantidad):
 
 # Resto del código...
 
-if _name_ == '_main_':
+if __name__ == '_main_':
     app.run(debug=True)

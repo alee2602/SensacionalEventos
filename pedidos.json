@@ -1,22 +1,32 @@
 [
-    {
-      "idPedido": 1,
-      "idCliente": 1,
-      "comentarios": "Purbea",
-      "descripcionPedido": "vaso:20---plato:15",
-      "fechaEntrega": "2024-01-13",
-      "fechaRecoger": "2024-01-15",
-      "estado": "pendiente",
-      "total": 65.0
-    },
-    {
-      "idPedido": 2,
-      "idCliente": 1,
-      "comentarios": "j",
-      "descripcionPedido": "shaffing:50---vaso:20",
-      "fechaEntrega": "2024-01-17",
-      "fechaRecoger": "2024-01-19",
-      "estado": "pendiente",
-      "total": 100.0
-    }
-  ]
+  {
+    "idPedido": 1,
+    "idCliente": 1,
+    "comentarios": "Purbea",
+    "descripcionPedido": "vaso:20---plato:15",
+    "fechaEntrega": "2024-01-13",
+    "fechaRecoger": "2024-01-15",
+    "estado": "finalizado",
+    "total": 65.0
+  },
+  {
+    "idPedido": 2,
+    "idCliente": 1,
+    "comentarios": "j",
+    "descripcionPedido": "shaffing:50---vaso:20",
+    "fechaEntrega": "2024-01-17",
+    "fechaRecoger": "2024-01-19",
+    "estado": "pendiente",
+    "total": 100.0
+  },
+  {
+    "idPedido": 3,
+    "idCliente": 1,
+    "comentarios": "fghj",
+    "descripcionPedido": "vaso:5",
+    "fechaEntrega": "2024-04-04",
+    "fechaRecoger": "2024-04-30",
+    "estado": "pendiente",
+    "total": 12.5
+  }
+]
