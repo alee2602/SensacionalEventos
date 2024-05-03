@@ -5,6 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <title>Inventario</title>
+    <!-- Bootstrap CSS -->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+
+<!-- jQuery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<!-- Bootstrap JS -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
 </head>
 <body class="container mt-4">
     <h1 class="mb-4">Inventario</h1>
@@ -31,23 +40,76 @@
         <tbody>
             {% for producto in productos %}
                 <tr>
-                    <th scope="row">{{ producto.id }}</th>
-                    <td>{{ producto.producto }}</td>
-                    <td>{{ producto.marca }}</td>
-                    <td>{{ producto.valor }}</td>
-                    <td>{{ producto.precio }}</td>
-                    <td>{{ producto.cantidad }}</td>
-                    <td>{{ producto.comentarios }}</td>
+                    <th scope="row">{{ producto[0] }}</th>  <!-- ID -->
+                    <td>{{ producto[1] }}</td>  <!-- Producto -->
+                    <td>{{ producto[2] }}</td>  <!-- Marca -->
+                    <td>{{ producto[3] }}</td>  <!-- Valor -->
+                    <td>{{ producto[4] }}</td>  <!-- Precio -->
+                    <td>{{ producto[5] }}</td>  <!-- Cantidad -->
+                    <td>{{ producto[6] }}</td>  <!-- Comentarios -->
                     <td>
-                        <a href="{{ url_for('editar_producto_route', producto_id=producto.id) }}" class="btn btn-warning btn-sm">Editar</a>
-                        <a href="{{ url_for('eliminar_producto_route', producto_id=producto.id) }}" class="btn btn-danger btn-sm ml-2">Eliminar</a>
+                        <!-- Botón para abrir el modal de edición -->
+                        <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#editarModal{{ producto[0] }}">
+                            Editar
+                        </button>
+                        
+
+                        <!-- Modal de edición -->
+                        <div class="modal fade" id="editarModal{{ producto[0] }}" tabindex="-1" role="dialog" aria-labelledby="editarModal{{ producto[0] }}Label" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="editarModal{{ producto[0] }}Label">Editar Producto</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <!-- Aquí deberías incluir los campos de edición con los valores del producto -->
+                                        <form method="POST" action="{{ url_for('editar_producto_route', producto_id=producto[0]) }}">
+                                            <!-- Campos de edición -->
+                                            <div class="form-group">
+                                                <label for="producto{{ producto[0] }}">Producto</label>
+                                                
+                                                <input type="text" class="form-control" id="producto{{ producto[1] }}" name="producto" value="{{ producto[1] }}">
+                                                <label for="producto{{ producto[0] }}">Marca</label>
+                                                
+                                                <input type="text" class="form-control" id="producto{{ producto[2] }}" name="marca" value="{{ producto[2] }}">
+                                                <label for="producto{{ producto[0] }}">Valor</label>
+                                                
+                                                <input type="text" class="form-control" id="producto{{ producto[3] }}" name="valor" value="{{ producto[3] }}">
+                                                <label for="producto{{ producto[0] }}">Precio</label>
+                                                
+                                                <input type="text" class="form-control" id="producto{{ producto[4] }}" name="precio" value="{{ producto[4] }}">
+                                                <label for="producto{{ producto[0] }}">Cantidad</label>
+                                                
+                                                <input type="text" class="form-control" id="producto{{ producto[5] }}" name="cantidad" value="{{ producto[5] }}">
+                                                <label for="producto{{ producto[0] }}">Comentarios</label>
+                                                
+                                                <input type="text" class="form-control" id="producto{{ producto[6] }}" name="comentarios" value="{{ producto[6] }}">
+                                            </div>
+                                            <!-- Otros campos de edición -->
+                                            <!-- Asegúrate de incluir todos los campos necesarios para editar el producto -->
+                                            <!-- Puedes usar los campos de producto[2], producto[3], etc. -->
+                                            <!-- ... -->
+
+                                            <!-- Botón de enviar el formulario -->
+                                            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Botón para eliminar el producto -->
+                        <a href="{{ url_for('eliminar_producto_route', producto_id=producto[0]) }}" class="btn btn-danger btn-sm ml-2">Eliminar</a>
                     </td>
                 </tr>
             {% endfor %}
         </tbody>
     </table>
-    <a class="btn btn-primary mt-4" href="{{ url_for('crear_producto_route') }}">Crear Nuevo Producto</a>
-    <a class="btn btn-secondary mt-4" href="{{ url_for('index') }}">Volver al Menú Principal</a>
+    <a class="btn btn-primary mt-4" href="/crear_producto">Crear Nuevo Producto</a>
+    <a class="btn btn-secondary mt-4" href="#">Volver al Menú Principal</a>
 
 <!-- Agregamos script para la búsqueda en tiempo real -->
 <script>
@@ -74,7 +136,6 @@
         }
     });
 </script>
-
 
 </body>
 </html>

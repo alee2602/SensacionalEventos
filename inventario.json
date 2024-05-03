@@ -1,38 +1,38 @@
 [
-    {
-      "id": 1,
-      "producto": "vaso",
-      "marca": "mayfer",
-      "valor": 7,
-      "precio": 2.5,
-      "cantidad": 250,
-      "comentarios": "Vasos de 12 onzas"
-    },
-    {
-      "id": 2,
-      "producto": "shaffing",
-      "marca": "silicio",
-      "valor": 8,
-      "precio": 1,
-      "cantidad": 1000,
-      "comentarios": "Vasos de 12 onzas"
-    },
-    {
-      "id": 3,
-      "producto": "copa",
-      "marca": "copita",
-      "valor": 5,
-      "precio": 100,
-      "cantidad": 200,
-      "comentarios": "asdasd"
-    },
-    {
-      "id": 4,
-      "producto": "azafate",
-      "marca": "azafatito",
-      "valor": 2.5,
-      "precio": 75.0,
-      "cantidad": 1000,
-      "comentarios": "asdas"
-    }
-  ]
+  {
+    "id": 1,
+    "producto": "vasoasdasdadsasdadsadghgfdsfg",
+    "marca": "mayfer",
+    "valor": "7",
+    "precio": "2.5",
+    "cantidad": "250",
+    "comentarios": "Vasos de 12 onzas"
+  },
+  {
+    "id": 2,
+    "producto": "shaffing",
+    "marca": "silicio",
+    "valor": 8,
+    "precio": 1,
+    "cantidad": 1000,
+    "comentarios": "Vasos de 12 onzas"
+  },
+  {
+    "id": 3,
+    "producto": "copa",
+    "marca": "copita",
+    "valor": 5,
+    "precio": 100,
+    "cantidad": 200,
+    "comentarios": "asdasd"
+  },
+  {
+    "id": 4,
+    "producto": "azafate",
+    "marca": "azafatito",
+    "valor": 2.5,
+    "precio": 75.0,
+    "cantidad": 1000,
+    "comentarios": "asdas"
+  }
+]

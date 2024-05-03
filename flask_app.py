@@ -5,7 +5,7 @@ from inventario import cargar_datos as cargar_datos_inventario, guardar_datos as
 from inventario import obtener_ultimo_id as obtener_ultimo_id_inventario, crear_producto, obtener_producto_por_id, editar_producto, eliminar_producto
 from pedidos import  obtener_productos,obtener_clientes,cargar_datos_pedidos, editar_pedido,obtener_pedido_por_id,eliminar_pedido,guardar_datos_pedidos, obtener_ultimo_id_pedidos, crear_pedido, cambiar_estado_pedido
 import json
-from db.conexiondb import verificar_credenciales
+from db.conexiondb import verificar_credenciales,obtener_inventario,editar_inventario,eliminar_inventario,insertar_producto
 from pdf import generar_pdf
 from functools import wraps
 import secrets
@@ -26,12 +26,13 @@ def login():
         username = request.form['username']
         password = request.form['password']
         print(username)
-        print(password)
+        ver=verificar_credenciales(username,password)
+     
 
         # Verificar las credenciales del usuario en la base de datos
         #usuario = verificar_credenciales(username, password)
 
-        if username == "admin" and password == "admin":
+        if username == ver[2] and password == ver[3]:
             print("si")    
             return render_template('index.html')
         else:
@@ -54,7 +55,10 @@ def pedidos():
 
 @app.route('/inventario')
 def inventario():
-    productos = cargar_datos_inventario()
+    productos = obtener_inventario()
+    print("-----------------")
+    print(productos)
+    print("-----------------")
     return render_template('inventario.html', productos=productos)
 
 
@@ -214,40 +218,35 @@ def eliminar_pedido_route(pedido_id):
 @app.route('/crear_producto', methods=['GET', 'POST'])
 def crear_producto_route():
     if request.method == 'POST':
-        datos_producto = {
-            'producto': request.form['producto'],
-            'marca': request.form['marca'],
-            'valor': float(request.form['valor']),
-            'precio': float(request.form['precio']),
-            'cantidad': request.form['cantidad'],
-            'comentarios': request.form['comentarios']
-        }
-        crear_producto(datos_producto)
+        datos_producto = (
+            request.form['producto'],
+            request.form['marca'],
+            float(request.form['valor']),
+            float(request.form['precio']),
+            request.form['cantidad'],
+            request.form['comentarios']
+        )
+        insertar_producto(datos_producto)
         return redirect(url_for('inventario'))
 
     return render_template('crear_producto.html')
+
 
 @app.route('/editar_producto/<int:producto_id>', methods=['GET', 'POST'])
 def editar_producto_route(producto_id):
     producto = obtener_producto_por_id(producto_id)
 
     if request.method == 'POST':
-        nuevos_datos = {
-            'producto': request.form['producto'],
-            'marca': request.form['marca'],
-            'valor': request.form['valor'],
-            'precio': request.form['precio'],
-            'cantidad': request.form['cantidad'],
-            'comentarios': request.form['comentarios']
-        }
-        editar_producto(producto_id, nuevos_datos)
+        nuevos_datos=[request.form['producto'],request.form['marca'],request.form['valor'],request.form['precio'],request.form['cantidad'],request.form['comentarios']]
+        print(nuevos_datos)
+        editar_inventario(producto_id, nuevos_datos)
         return redirect(url_for('inventario'))
 
     return render_template('editar_producto.html', producto=producto)
 
 @app.route('/eliminar_producto/<int:producto_id>')
 def eliminar_producto_route(producto_id):
-    eliminar_producto(producto_id)
+    eliminar_inventario(producto_id)
     return redirect(url_for('inventario'))
 @app.route('/actualizar_inventario/<int:producto_id>/<int:cantidad>', methods=['POST'])
 def actualizar_inventario(producto_id, cantidad):
