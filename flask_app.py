@@ -1,11 +1,9 @@
 from flask import Flask, render_template, request, redirect, url_for,jsonify,flash,session
 from flask_bootstrap import Bootstrap
-from clientes import cargar_datos, guardar_datos, obtener_ultimo_id, crear_usuario,obtener_usuario_por_id,editarUsuario,eliminarUsuario
-from inventario import cargar_datos as cargar_datos_inventario, guardar_datos as guardar_datos_inventario
-from inventario import obtener_ultimo_id as obtener_ultimo_id_inventario, crear_producto, obtener_producto_por_id, editar_producto, eliminar_producto
+#from clientes import cargar_datos, guardar_datos, obtener_ultimo_id, crear_usuario,obtener_usuario_por_id,editarUsuario,eliminarUsuario
 from pedidos import  obtener_productos,obtener_clientes,cargar_datos_pedidos, editar_pedido,obtener_pedido_por_id,eliminar_pedido,guardar_datos_pedidos, obtener_ultimo_id_pedidos, crear_pedido, cambiar_estado_pedido
 import json
-from db.conexiondb import verificar_credenciales,obtener_inventario,editar_inventario,eliminar_inventario,insertar_producto
+from db.conexiondb import verificar_credenciales,obtener_inventario,editar_inventario,eliminar_inventario,insertar_producto,obtener_clientes_bd,eliminar_cliente,editar_cliente_bd,crear_cliente_bd
 from pdf import generar_pdf
 from functools import wraps
 import secrets
@@ -32,7 +30,8 @@ def login():
         # Verificar las credenciales del usuario en la base de datos
         #usuario = verificar_credenciales(username, password)
 
-        if username == ver[2] and password == ver[3]:
+
+        if ver!=None and (username == ver[2] and password == ver[3]):
             print("si")    
             return render_template('index.html')
         else:
@@ -40,10 +39,11 @@ def login():
         
     return render_template('login.html')
 
-@app.route('/usuarios')
-def usuarios():
-    usuarios = cargar_datos()
-    return render_template('usuarios.html', usuarios=usuarios)
+@app.route('/clientes')
+def clientes():
+    clientes = obtener_clientes_bd()
+    print(clientes)
+    return render_template('clientes.html', clientes=clientes)
 @app.route('/pedidos')
 def pedidos():
     # Cargar datos de pedidos.json
@@ -62,8 +62,8 @@ def inventario():
     return render_template('inventario.html', productos=productos)
 
 
-@app.route('/crear_usuario', methods=['GET', 'POST'])
-def crear_usuario_route():
+@app.route('/crear_cliente', methods=['GET', 'POST'])
+def crear_cliente_route():
     if request.method == 'POST':
         datos_usuario = {
             'nombre': request.form['nombre'],
@@ -72,8 +72,9 @@ def crear_usuario_route():
             'codigoAcceso': request.form['codigoAcceso'],
             'telefono': request.form['telefono']
         }
-        crear_usuario(datos_usuario)
-        return redirect(url_for('usuarios'))
+        datos_usuario=[request.form['nombre'],request.form['apellido'],request.form['direccion'],request.form['codigoAcceso'],request.form['telefono']]
+        crear_cliente_bd(datos_usuario)
+        return redirect(url_for('clientes'))
 
     return render_template('crearUsuario.html')
 
@@ -84,11 +85,8 @@ def cambiar_estado_pedido_route(pedido_id):
         return redirect(url_for('listar_pedidos'))
     else:
         return 'Método no permitido', 405
-
-@app.route('/editar_usuario/<int:usuario_id>', methods=['GET', 'POST'])
-def editar_usuario(usuario_id):
-    usuario = obtener_usuario_por_id(usuario_id)
-
+@app.route('/editar_cliente/<int:cliente_id>', methods=['GET', 'POST'])
+def editar_cliente(cliente_id):
     if request.method == 'POST':
         nuevos_datos = {
             'nombre': request.form['nombre'],
@@ -97,15 +95,19 @@ def editar_usuario(usuario_id):
             'codigoAcceso': request.form['codigoAcceso'],
             'telefono': request.form['telefono']
         }
-        editarUsuario(usuario_id, nuevos_datos)
-        return redirect(url_for('usuarios'))
+        nuevos_datos=[request.form['nombre'],request.form['apellido'],request.form['direccion'],request.form['codigoAcceso'],request.form['telefono']]
+        editar_cliente_bd(cliente_id, nuevos_datos)  # Aquí pasamos cliente_id como el primer argumento
+        return redirect(url_for('clientes'))
 
-    return render_template('editar_usuario.html', usuario=usuario)
+    return render_template('clientes.html', clientes=obtener_clientes_bd())
+
+
+
 
 @app.route('/eliminar_usuario/<int:usuario_id>')
 def eliminar_usuario(usuario_id):
-    eliminarUsuario(usuario_id)
-    return redirect(url_for('usuarios'))
+    eliminar_cliente(usuario_id)
+    return redirect('/clientes')
 
 # Rutas para la página de pedidos
 @app.route('/pedidos')
@@ -142,28 +144,6 @@ def crear_pedido_route():
 
     return render_template('formulario_pedido.html', clientes=clientes, productos=productos)
 
-def actualizar_inventario_pedido(formulario, productos):
-    """Actualizar el inventario al procesar un nuevo pedido."""
-    try:
-        for producto in productos:
-            cantidad_pedido = int(formulario.get(f'cantidad_{producto["id"]}', 0))
-            if cantidad_pedido > 0:
-                cantidad_disponible = producto["cantidad"]
-                if cantidad_pedido > cantidad_disponible:
-                    # Si no hay suficiente cantidad disponible, abortar la actualización
-                    return False
-                else:
-                    # Restar la cantidad pedida del inventario
-                    producto["cantidad"] -= cantidad_pedido
-
-        # Guardar los cambios en el archivo de inventario
-        guardar_datos_inventario(productos)
-        return True
-
-    except Exception as e:
-        # Manejar cualquier excepción que pueda ocurrir durante la actualización del inventario
-        print(f"Error al actualizar el inventario: {str(e)}")
-        return False
 def generar_descripcion_pedido(formulario, productos):
     """Generar la descripción del pedido a partir del formulario."""
     detalles = []
@@ -234,7 +214,6 @@ def crear_producto_route():
 
 @app.route('/editar_producto/<int:producto_id>', methods=['GET', 'POST'])
 def editar_producto_route(producto_id):
-    producto = obtener_producto_por_id(producto_id)
 
     if request.method == 'POST':
         nuevos_datos=[request.form['producto'],request.form['marca'],request.form['valor'],request.form['precio'],request.form['cantidad'],request.form['comentarios']]
@@ -242,7 +221,7 @@ def editar_producto_route(producto_id):
         editar_inventario(producto_id, nuevos_datos)
         return redirect(url_for('inventario'))
 
-    return render_template('editar_producto.html', producto=producto)
+    
 
 @app.route('/eliminar_producto/<int:producto_id>')
 def eliminar_producto_route(producto_id):

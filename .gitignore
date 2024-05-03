@@ -1,0 +1,17 @@
+# Archivos generados por Visual Studio
+.vscode/
+*.suo
+*.sln
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+*.pdb
+*.obj
+*.cache
+*.ilk
+*.log
+*.d
+*.pyc
+
+# Carpeta __pycache__
+__pycache__/

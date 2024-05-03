@@ -7,9 +7,12 @@
     <title>Menú Principal</title>
 </head>
 <body class="container mt-4">
-    <h1 class="mb-4">Menú Principal</h1>
+    <center>
+        
+        <h1 class="mb-4">Menú Principal</h1>
+    </center>
     <div class="list-group">
-        <a href="{{ url_for('usuarios') }}" class="list-group-item list-group-item-action">Usuarios</a>
+        <a href="{{ url_for('clientes') }}" class="list-group-item list-group-item-action">Clientes</a>
         <a href="{{ url_for('inventario') }}" class="list-group-item list-group-item-action">Inventario</a>
         <a href="{{ url_for('pedidos') }}" class="list-group-item list-group-item-action">Pedidos</a>
     </div>

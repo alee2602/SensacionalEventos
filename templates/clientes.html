@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+
+    <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script></head>
+<body class="container mt-4">
+    <h1 class="mb-4">Lista de Clientes</h1>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Apellido</th>
+                <th>Dirección</th>
+                <th>Teléfono</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for cliente in clientes %}
+                <tr>
+                    <td>{{ cliente[0] }}</td>
+                    <td>{{ cliente[1] }}</td>
+                    <td>{{ cliente[2] }}</td>
+                    <td>{{ cliente[3] }}</td>
+                    <td>{{ cliente[4] }}</td>
+                    <td>
+                        <!-- Botón para abrir el modal de edición -->
+                        <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#editarModal{{ cliente[0] }}">
+                            Editar
+                        </button>
+                        
+
+                        <!-- Modal de edición -->
+                        <div class="modal fade" id="editarModal{{ cliente[0] }}" tabindex="-1" role="dialog" aria-labelledby="editarModal{{ cliente[0] }}Label" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="editarModal{{ cliente[0] }}Label">Editar cliente</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <!-- Aquí deberías incluir los campos de edición con los valores del cliente -->
+                                        <form method="POST" action="{{ url_for('editar_cliente', cliente_id=cliente[0]) }}">
+                                            <!-- Campos de edición -->
+                                            <div class="form-group">
+                                                <label for="cliente{{ cliente[0] }}">Nombre</label>
+                                                
+                                                <input type="text" class="form-control" id="cliente{{ cliente[1] }}" name="nombre" value="{{ cliente[1] }}">
+                                                <label for="cliente{{ cliente[0] }}">Apellido</label>
+                                                
+                                                <input type="text" class="form-control" id="cliente{{ cliente[2] }}" name="apellido" value="{{ cliente[2] }}">
+                                                <label for="cliente{{ cliente[0] }}">Direccion</label>
+                                                
+                                                <input type="text" class="form-control" id="cliente{{ cliente[3] }}" name="direccion" value="{{ cliente[3] }}">
+                                                <label for="cliente{{ cliente[0] }}">Codigo de acceso</label>
+                                                
+                                                <input type="text" class="form-control" id="cliente{{ cliente[4] }}" name="codigoAcceso" value="{{ cliente[4] }}">
+                                                <label for="cliente{{ cliente[0] }}">Telefono</label>
+
+                                                <input type="text" class="form-control" id="cliente{{ cliente[6] }}" name="telefono" value="{{ cliente[4] }}">
+
+                                                
+                                             
+                                                
+                                            </div>
+                                            <!-- Otros campos de edición -->
+                                            <!-- Asegúrate de incluir todos los campos necesarios para editar el cliente -->
+                                            <!-- Puedes usar los campos de cliente[2], cliente[3], etc. -->
+                                            <!-- ... -->
+
+                                            <!-- Botón de enviar el formulario -->
+                                            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <a href="{{ url_for('eliminar_usuario', usuario_id=cliente[0]) }}" class="btn btn-danger btn-sm ml-2">Eliminar</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a class="btn btn-primary mt-4" href="{{ url_for('crear_cliente_route') }}">Crear Nuevo Cliente</a>
+    <a class="btn btn-secondary mt-4" href="{{ url_for('index') }}">Volver al Menú Principal</a>
+
+    <!-- Modal para editar usuario -->
+    <div class="modal fade" id="editarUsuarioModal" tabindex="-1" role="dialog" aria-labelledby="editarUsuarioModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editarUsuarioModalLabel">Editar Usuario</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="editarUsuarioForm">
+                        <input type="hidden" id="userId">
+                        <div class="form-group">
+                            <label for="nombre">Nombre:</label>
+                            <input type="text" class="form-control" id="nombre">
+                        </div>
+                        <div class="form-group">
+                            <label for="apellido">Apellido:</label>
+                            <input type="text" class="form-control" id="apellido">
+                        </div>
+                        <div class="form-group">
+                            <label for="direccion">Dirección:</label>
+                            <input type="text" class="form-control" id="direccion">
+                        </div>
+                        <div class="form-group">
+                            <label for="telefono">Teléfono:</label>
+                            <input type="text" class="form-control" id="telefono">
+                        </div>
+                        <button type="button" class="btn btn-primary" onclick="guardarCambios()">Guardar Cambios</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+ <!-- Agregamos script para la búsqueda en tiempo real -->
+<script>
+    document.getElementById('searchProduct').addEventListener('input', function() {
+        var input, filter, table, tr, td, i, txtValue;
+        input = document.getElementById('searchProduct');
+        filter = input.value.toUpperCase();
+        table = document.querySelector('.table');
+        tr = table.getElementsByTagName('tr');
+
+        for (i = 1; i < tr.length; i++) { // Empezamos desde 1 para omitir la fila de encabezado
+            var found = false;
+            for (var j = 0; j < tr[i].cells.length; j++) {
+                td = tr[i].cells[j];
+                if (td) {
+                    txtValue = td.textContent || td.innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        found = true;
+                        break;  // No es necesario revisar más celdas si ya se encontró la coincidencia
+                    }
+                }
+            }
+            tr[i].style.display = found ? '' : 'none';
+        }
+    });
+</script>
+</body>
+</html>
