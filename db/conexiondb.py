@@ -256,6 +256,39 @@ def crear_cliente_bd(producto):
 
     return False  # Retornar False en caso de error para indicar que la operación no se completó con éxito
 
+###################################################################
+#                           PEDIDOS                               #
+###################################################################
+
+def crear_pedido_bd(pedido):
+    try:
+        conexion = crear_conexion()
+        cursor = conexion.cursor()
+
+        # Consulta para insertar un nuevo producto en el inventario
+        query = "INSERT INTO pedidos (id_cliente, comentarios, descripcion_pedido, fecha_entrega, fecha_recoger,estado,total) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+        print("0000000000000000000000")
+        print(pedido)
+        cursor.execute(query, pedido)
+
+        # Confirmar la transacción
+        conexion.commit()
+
+        return True
+
+    except (Exception, Error) as error:
+        print("Error al insertar el nuevo producto:", error)
+        # Si ocurre algún error, se puede manejar aquí, y se puede devolver False o realizar alguna otra acción
+
+    finally:
+        # Cerrar el cursor y la conexión
+        if cursor:
+            cursor.close()
+        if conexion:
+            conexion.close()
+
+    return False  # Retornar False en caso de error para indicar que la operación no se completó con éxito
+
 if __name__ == "__main__":
     conexion = crear_conexion()
     if conexion:

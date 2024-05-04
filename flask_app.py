@@ -3,7 +3,7 @@ from flask_bootstrap import Bootstrap
 #from clientes import cargar_datos, guardar_datos, obtener_ultimo_id, crear_usuario,obtener_usuario_por_id,editarUsuario,eliminarUsuario
 from pedidos import  obtener_productos,obtener_clientes,cargar_datos_pedidos, editar_pedido,obtener_pedido_por_id,eliminar_pedido,guardar_datos_pedidos, obtener_ultimo_id_pedidos, crear_pedido, cambiar_estado_pedido
 import json
-from db.conexiondb import verificar_credenciales,obtener_inventario,editar_inventario,eliminar_inventario,insertar_producto,obtener_clientes_bd,eliminar_cliente,editar_cliente_bd,crear_cliente_bd
+from db.conexiondb import verificar_credenciales,obtener_inventario,editar_inventario,eliminar_inventario,insertar_producto,obtener_clientes_bd,eliminar_cliente,editar_cliente_bd,crear_cliente_bd,crear_pedido_bd
 from pdf import generar_pdf
 from functools import wraps
 import secrets
@@ -18,6 +18,10 @@ app.secret_key=secrets.token_hex(16)
 @app.route('/index')
 def index():
     return render_template('index.html')
+
+###################################################################
+#                           LOGIN                                 #
+###################################################################
 @app.route('/', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -125,22 +129,19 @@ def obtener_cantidad_pedido_producto(pedido, producto_id):
 
 @app.route('/pedidos/nuevo', methods=['GET', 'POST'])
 def crear_pedido_route():
-    clientes = obtener_clientes()
-    productos = obtener_productos()
+    clientes = obtener_clientes_bd()
+    productos = obtener_inventario()
 
     if request.method == 'POST':
-        nuevo_pedido = {
-            "idCliente": int(request.form.get('idCliente')),
-            "descripcionPedido": request.form.get('descripcion'),
-            "comentarios":request.form.get('comentarios'),
-            "fechaEntrega": request.form.get('fechaEntrega'),
-            "fechaRecoger": request.form.get('fechaRecoger'),
-            "estado": "pendiente",
-            "total": float(request.form.get('total'))
-        }
-        print(nuevo_pedido['comentarios'])
-        crear_pedido(nuevo_pedido)
-        generar_pdf(nuevo_pedido['idCliente'],nuevo_pedido['descripcionPedido'],nuevo_pedido['total'],nuevo_pedido['fechaEntrega'],nuevo_pedido['fechaRecoger'])
+        #nuevo_pedido=[str(request.form.get('idCliente')),request.form.get('comentarios'),request.form.get('descripcion'),request.form.get('fechaEntrega'),'Pendiente',request.form.get('fechaRecoger'),'pendiente',request.form.get('total')]
+        nuevo_pedido=[str(request.form.get('idCliente')),request.form.get('comentarios'),str(request.form.get('descripcion')).replace(":","---")+", ",request.form.get('fechaEntrega'),request.form.get('fechaRecoger'),'pendiente',request.form.get('total')]
+        print(nuevo_pedido)
+        
+        if crear_pedido_bd(nuevo_pedido):
+            print("sisisiis")
+        else:
+            print("nononono")
+        generar_pdf(nuevo_pedido[0],nuevo_pedido[2],nuevo_pedido[6],nuevo_pedido[3],nuevo_pedido[4])
 
     return render_template('formulario_pedido.html', clientes=clientes, productos=productos)
 
