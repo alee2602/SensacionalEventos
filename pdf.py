@@ -6,22 +6,17 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image
 from clientes import cargar_datos
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image, Table, TableStyle
 import json
+from db.conexiondb import obtener_clientes_bd_byId
 
 def obtener_informacion_por_id(id_buscado):
-    with open('clientes.json', 'r') as archivo:
-        usuarios = json.load(archivo)
+    return obtener_clientes_bd_byId(id)
 
-    for usuario in usuarios:
-        if usuario['id'] == id_buscado:
-            return usuario
-
-    return None  # Retorna None si no se encuentra el usuario con el ID especificado
 
 def generar_pdf(nombre_cliente, descripcion_pedido, total, fecha_entrega, fecha_recoger):
     inforCliente = obtener_informacion_por_id(nombre_cliente)
 
     # Ruta donde se guardará el PDF
-    ruta_pdf = f"reportes/{inforCliente['nombre'].replace(' ', '_')}_pedido.pdf"
+    ruta_pdf = f"reportes/{inforCliente[1].replace(' ', '_')}_pedido.pdf"
 
     # Crear un objeto PDF
     pdf = SimpleDocTemplate(ruta_pdf, pagesize=letter)
@@ -45,15 +40,15 @@ def generar_pdf(nombre_cliente, descripcion_pedido, total, fecha_entrega, fecha_
 
     # Información del Cliente
     contenido.append(Spacer(1, 12))
-    contenido.append(Paragraph(f"<b>Cliente:</b> {inforCliente['nombre']}", estilo_normal))
-    contenido.append(Paragraph(f"<b>Dirección:</b> {inforCliente['direccion']}", estilo_normal))
+    contenido.append(Paragraph(f"<b>Cliente:</b> {inforCliente[1]}", estilo_normal))
+    contenido.append(Paragraph(f"<b>Dirección:</b> {inforCliente[3]}", estilo_normal))
 
     # Descripción del Pedido
     contenido.append(Spacer(1, 12))
     contenido.append(Paragraph("<b>Descripción del Pedido:</b>", estilo_normal))
 
     # Dividir la descripción en líneas si es necesario
-    descripcion_lineas = descripcion_pedido.split('---')
+    descripcion_lineas = descripcion_pedido.split(':')
     for linea in descripcion_lineas:
         contenido.append(Paragraph(linea, estilo_normal))
 
