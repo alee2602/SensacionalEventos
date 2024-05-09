@@ -5,18 +5,34 @@ from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image
 from clientes import cargar_datos
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image, Table, TableStyle
-import json
 from db.conexiondb import obtener_clientes_bd_byId
+import os
+
+base_dir = os.path.abspath(os.path.dirname(__file__))
+logo_path = os.path.join(base_dir, 'logo.png')
 
 def obtener_informacion_por_id(id_buscado):
-    return obtener_clientes_bd_byId(id)
+    return obtener_clientes_bd_byId(id_buscado)
 
 
-def generar_pdf(nombre_cliente, descripcion_pedido, total, fecha_entrega, fecha_recoger):
-    inforCliente = obtener_informacion_por_id(nombre_cliente)
+def generar_pdf(id_cliente, descripcion_pedido, total, fecha_entrega, fecha_recoger):
+    inforCliente = obtener_informacion_por_id(id_cliente)
+    if not inforCliente:
+        print("Información del cliente no encontrada.")
+        return  # Salir de la función si no hay información del cliente
+    
+    try:
+        total_float = float(total)
+    except ValueError:
+        print(f"Valor de total inválido: {total}")
+        total_float = 0.0 
 
-    # Ruta donde se guardará el PDF
-    ruta_pdf = f"reportes/{inforCliente[1].replace(' ', '_')}_pedido.pdf"
+    nombre_cliente = inforCliente.get('nombre', 'Cliente Desconocido').replace(' ', '_')
+    # Formatear el nombre del archivo
+    nombre_archivo = f"{nombre_cliente}_pedido.pdf"
+
+    # Usar os.path.join para construir la ruta completa del archivo
+    ruta_pdf = os.path.join(base_dir, 'reportes', nombre_archivo)
 
     # Crear un objeto PDF
     pdf = SimpleDocTemplate(ruta_pdf, pagesize=letter)
@@ -31,7 +47,6 @@ def generar_pdf(nombre_cliente, descripcion_pedido, total, fecha_entrega, fecha_
     contenido = []
 
     # Logo
-    logo_path = "logo.png"
     logo = Image(logo_path, width=100, height=100)
     contenido.append(logo)
 
@@ -40,8 +55,8 @@ def generar_pdf(nombre_cliente, descripcion_pedido, total, fecha_entrega, fecha_
 
     # Información del Cliente
     contenido.append(Spacer(1, 12))
-    contenido.append(Paragraph(f"<b>Cliente:</b> {inforCliente[1]}", estilo_normal))
-    contenido.append(Paragraph(f"<b>Dirección:</b> {inforCliente[3]}", estilo_normal))
+    contenido.append(Paragraph(f"<b>Cliente:</b> {inforCliente.get('nombre', 'Cliente Desconocido')} {inforCliente.get('apellido', '')}", estilo_normal))
+    contenido.append(Paragraph(f"<b>Dirección:</b> {inforCliente.get('direccion', 'No Disponible')}", estilo_normal))
 
     # Descripción del Pedido
     contenido.append(Spacer(1, 12))
@@ -59,7 +74,7 @@ def generar_pdf(nombre_cliente, descripcion_pedido, total, fecha_entrega, fecha_
 
     # Total
     contenido.append(Spacer(1, 12))
-    contenido.append(Paragraph(f"<b>Total:</b> Q.{total:.2f}", estilo_normal))
+    contenido.append(Paragraph(f"<b>Total:</b> Q.{total_float:.2f}", estilo_normal))
 
     # Construir el PDF
     pdf.build(contenido)

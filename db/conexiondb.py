@@ -165,24 +165,27 @@ def obtener_inventario():
 ###################################################################
 #                           CLIENTES                              #
 ###################################################################
-def obtener_clientes_bd_byId(idCliente):
+def obtener_clientes_bd_byId(id_cliente):
     try:
-        conexion=crear_conexion()
+        conexion = crear_conexion()
         cursor = conexion.cursor()
-
-        # Consulta para verificar las credenciales del usuario
-        query = "SELECT * FROM clientes WHERE id=%s"
-        cursor.execute(query,(idCliente))
-        clientes = cursor.fetchall()
-
-        cursor.close()
-        conexion.close()
-
-        return clientes
-
-    except (Exception, Error) as error:
-        print("Error al verificar las credenciales:", error)
+        cursor.execute("SELECT * FROM clientes WHERE id=%s", (id_cliente,))
+        cliente = cursor.fetchone()
+        if cliente:
+                # Convertir la tupla en un diccionario
+                cliente_dict = {
+                    'id': cliente[0],
+                    'nombre': cliente[1],
+                    'apellido': cliente[2],
+                    'direccion': cliente[3],
+                    'codigoAcceso': cliente[4],
+                    'telefono': cliente[5]
+                }
+                return cliente_dict
         return None
+    except Exception as error:
+        print("Error al obtener información del cliente:", error)
+        #return None
         
 def obtener_clientes_bd():
     try:
