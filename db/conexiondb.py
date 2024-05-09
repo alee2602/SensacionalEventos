@@ -183,6 +183,7 @@ def obtener_clientes_bd_byId(idCliente):
     except (Exception, Error) as error:
         print("Error al verificar las credenciales:", error)
         return None
+        
 def obtener_clientes_bd():
     try:
         conexion=crear_conexion()
@@ -412,7 +413,7 @@ def obtener_todos_los_pedidos():
                 return pedidos
     except (Exception, Error) as error:
         print("Error al obtener pedidos:", error)
-        return []
+        #return []
 
     finally:
         # Cerrar el cursor y la conexión

@@ -32,18 +32,18 @@
         <tbody>
             {% for pedido in pedidos %}
                 <tr>
-                    <th scope="row">{{ pedido.idPedido }}</th>
-                    <td>{{ pedido.idCliente }}</td>
-                    <td>{{ pedido.descripcionPedido }}</td>
+                    <th scope="row">{{ pedido.id_pedido }}</th>
+                    <td>{{ pedido.id_cliente }}</td>
+                    <td>{{ pedido.descripcion_pedido }}</td>
                     <td>{{ pedido.comentarios }}</td>
-                    <td>{{ pedido.fechaEntrega }}</td>
-                    <td>{{ pedido.fechaRecoger }}</td>
+                    <td>{{ pedido.fecha_entrega }}</td>
+                    <td>{{ pedido.fecha_recoger }}</td>
                     <td>{{ pedido.estado }}</td>
                     <td>{{ pedido.total }}</td>
                     <td>
-                        <a href="{{ url_for('editar_pedido_route', pedido_id=pedido.idPedido) }}" class="btn btn-warning btn-sm">Editar</a>
-                        <a href="{{ url_for('eliminar_pedido_route', pedido_id=pedido.idPedido) }}" class="btn btn-danger btn-sm ml-2">Eliminar</a>
-                        <form action="{{ url_for('cambiar_estado_pedido_route', pedido_id=pedido.idPedido) }}" method="post" style="display: inline;">
+                        <a href="{{ url_for('editar_pedido_route', pedido_id=pedido.id_pedido) }}" class="btn btn-warning btn-sm">Editar</a>
+                        <a href="{{ url_for('eliminar_pedido_route', pedido_id=pedido.id_pedido) }}" class="btn btn-danger btn-sm ml-2">Eliminar</a>
+                        <form action="{{ url_for('cambiar_estado_pedido_route', pedido_id=pedido.id_pedido) }}" method="post" style="display: inline;">
                             <button type="submit" class="btn btn-success btn-sm ml-2">Cambiar Estado</button>
                         </form>
                     </td>
