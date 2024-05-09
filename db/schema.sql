@@ -42,6 +42,3 @@ CREATE TABLE IF NOT EXISTS Usuarios(
     password varchar(250),
     FOREIGN KEY (id_Rol) REFERENCES Roles(id)
 );
-
-
-

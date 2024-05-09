@@ -1,6 +1,11 @@
 # conexion.py
 import psycopg2
 from psycopg2 import Error
+import os
+
+script_directorio = os.path.dirname(os.path.abspath(__file__))
+
+os.chdir(script_directorio)
 
 def crear_conexion():
     try:
@@ -17,6 +22,7 @@ def crear_conexion():
         print("Error al conectarse a la base de datos:", error)
 
 def ejecutar_script(conexion, script_file):
+    cursor = None
     try:
         # Abre el archivo del script y ejecuta las declaraciones SQL
         with open(script_file, 'r') as file:
@@ -28,8 +34,9 @@ def ejecutar_script(conexion, script_file):
     except (Exception, Error) as error:
         print("Error al ejecutar el script:", error)
     finally:
-        if conexion:
+        if cursor:
             cursor.close()
+        if conexion:
             conexion.close()
             print("Conexion cerrada.")
 
@@ -310,4 +317,4 @@ def crear_pedido_bd(pedido):
 if __name__ == "__main__":
     conexion = crear_conexion()
     if conexion:
-        ejecutar_script(conexion, "db/schema.sql")
+        ejecutar_script(conexion, "schema.sql")
