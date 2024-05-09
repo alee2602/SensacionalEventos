@@ -288,22 +288,131 @@ def crear_cliente_bd(producto):
 def crear_pedido_bd(pedido):
     try:
         conexion = crear_conexion()
-        cursor = conexion.cursor()
-
-        # Consulta para insertar un nuevo producto en el inventario
-        query = "INSERT INTO pedidos (id_cliente, comentarios, descripcion_pedido, fecha_entrega, fecha_recoger,estado,total) VALUES (%s, %s, %s, %s, %s, %s, %s)"
-        print("0000000000000000000000")
-        print(pedido)
-        cursor.execute(query, pedido)
-
-        # Confirmar la transacción
-        conexion.commit()
-
-        return True
-
+        with conexion:
+            with conexion.cursor() as cursor:
+                query = """
+                INSERT INTO pedidos (
+                    id_cliente, comentarios, descripcion_pedido, fecha_entrega, fecha_recoger, estado, total
+                ) VALUES (%s, %s, %s, %s, %s, %s, %s)
+                """
+                cursor.execute(query, pedido)
+                conexion.commit() #Confirmar la transacción 
+                return True
     except (Exception, Error) as error:
-        print("Error al insertar el nuevo producto:", error)
-        # Si ocurre algún error, se puede manejar aquí, y se puede devolver False o realizar alguna otra acción
+        print("Error al insertar el nuevo pedido:", error)
+        #return False
+        
+def editar_pedido_bd(id_pedido, nuevos_datos):
+    try:
+        conexion = crear_conexion()
+        with conexion:
+            with conexion.cursor() as cursor:
+                query = """
+                UPDATE pedidos SET
+                    id_cliente = %s,
+                    comentarios = %s,
+                    descripcion_pedido = %s,
+                    fecha_entrega = %s,
+                    fecha_recoger = %s,
+                    estado = %s,
+                    total = %s
+                WHERE id_pedido = %s;
+                """
+                # Crear una tupla con los datos que se actualizarán
+                datos_actualizados = (
+                    nuevos_datos["id_cliente"],
+                    nuevos_datos["comentarios"],
+                    nuevos_datos["descripcion_pedido"],
+                    nuevos_datos["fecha_entrega"],
+                    nuevos_datos["fecha_recoger"],
+                    nuevos_datos["estado"],
+                    nuevos_datos["total"],
+                    id_pedido  
+                )
+                cursor.execute(query, datos_actualizados)
+                conexion.commit()
+                return cursor.rowcount > 0  # Retorna True si se actualizó al menos un registro
+    except (Exception, Error) as error:
+        print("Error al editar el pedido:", error)
+        #return False
+
+def eliminar_pedido_bd(id_pedido):
+    try:
+        conexion = crear_conexion()
+        with conexion:
+            with conexion.cursor() as cursor:
+                # Consulta SQL para eliminar el pedido específico
+                query = "DELETE FROM pedidos WHERE id_pedido = %s;"
+                cursor.execute(query, (id_pedido,))
+                conexion.commit()
+                return cursor.rowcount > 0  # Retorna True si se eliminó al menos un registro
+    except (Exception, Error) as error:
+        print("Error al eliminar el pedido:", error)
+        #return False
+
+def obtener_pedido_por_id_bd(id_pedido):
+    try:
+        conexion = crear_conexion()
+        with conexion:
+            with conexion.cursor() as cursor:
+                # Consulta SQL para obtener el pedido por ID
+                query = "SELECT * FROM pedidos WHERE id_pedido = %s;"
+                cursor.execute(query, (id_pedido,))
+                pedido = cursor.fetchone()  # Obtener el primer resultado
+                if pedido:
+                    return {
+                        "id_pedido": pedido[0],
+                        "id_cliente": pedido[1],
+                        "comentarios": pedido[2],
+                        "descripcion_pedido": pedido[3],
+                        "fecha_entrega": pedido[4],
+                        "fecha_recoger": pedido[5],
+                        "estado": pedido[6],
+                        "total": pedido[7]
+                    }
+                else:
+                    return None  # No se encontró el pedido
+    except (Exception, Error) as error:
+        print("Error al obtener el pedido por ID:", error)
+        #return None
+
+def cambiar_estado_pedido_bd(id_pedido):
+    try:
+        conexion = crear_conexion()
+        with conexion:
+            with conexion.cursor() as cursor:
+                # Primero, obtener el estado actual del pedido
+                cursor.execute("SELECT estado FROM pedidos WHERE id_pedido = %s;", (id_pedido,))
+                resultado = cursor.fetchone()
+                if resultado is None:
+                    print("No se encontró el pedido.")
+                    return False
+
+                estado_actual = resultado[0]
+                # Definir el nuevo estado basado en el estado actual
+                nuevo_estado = 'finalizado' if estado_actual == 'pendiente' else 'pendiente'
+
+                # Ahora, actualizar el estado del pedido
+                cursor.execute("UPDATE pedidos SET estado = %s WHERE id_pedido = %s;", (nuevo_estado, id_pedido))
+                conexion.commit()
+                return cursor.rowcount > 0  # Retorna True si se actualizó al menos un registro
+    except (Exception, Error) as error:
+        print("Error al cambiar el estado del pedido:", error)
+        #return False
+
+def obtener_todos_los_pedidos():
+    try:
+        conexion = crear_conexion()
+        with conexion:
+            with conexion.cursor() as cursor:
+                cursor.execute("SELECT * FROM pedidos;")
+                # Recuperar todos los registros y convertirlos en una lista de diccionarios
+                columnas = [desc[0] for desc in cursor.description]
+                pedidos = [dict(zip(columnas, row)) for row in cursor.fetchall()]
+                return pedidos
+    except (Exception, Error) as error:
+        print("Error al obtener pedidos:", error)
+        return []
 
     finally:
         # Cerrar el cursor y la conexión

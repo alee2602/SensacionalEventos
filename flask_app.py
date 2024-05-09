@@ -1,9 +1,9 @@
 from flask import Flask, render_template, request, redirect, url_for,jsonify,flash,session
 from flask_bootstrap import Bootstrap
 #from clientes import cargar_datos, guardar_datos, obtener_ultimo_id, crear_usuario,obtener_usuario_por_id,editarUsuario,eliminarUsuario
-from pedidos import  obtener_productos,obtener_clientes,cargar_datos_pedidos, editar_pedido,obtener_pedido_por_id,eliminar_pedido,guardar_datos_pedidos, obtener_ultimo_id_pedidos, crear_pedido, cambiar_estado_pedido
+#from pedidos import  crear_pedido, editar_pedido,obtener_pedido_por_id,eliminar_pedido, cambiar_estado_pedido
 import json
-from db.conexiondb import verificar_credenciales,obtener_inventario,editar_inventario,eliminar_inventario,insertar_producto,obtener_clientes_bd,eliminar_cliente,editar_cliente_bd,crear_cliente_bd,crear_pedido_bd
+from db.conexiondb import verificar_credenciales,obtener_inventario,editar_inventario,eliminar_inventario,insertar_producto,obtener_clientes_bd,eliminar_cliente,editar_cliente_bd,crear_cliente_bd,crear_pedido_bd,editar_pedido_bd,eliminar_pedido_bd,obtener_pedido_por_id_bd,cambiar_estado_pedido_bd, obtener_todos_los_pedidos
 from pdf import generar_pdf
 from functools import wraps
 import secrets
@@ -29,7 +29,7 @@ def login():
         password = request.form['password']
         print(username)
         ver=verificar_credenciales(username,password)
-     
+    
 
         # Verificar las credenciales del usuario en la base de datos
         #usuario = verificar_credenciales(username, password)
@@ -50,11 +50,9 @@ def clientes():
     return render_template('clientes.html', clientes=clientes)
 @app.route('/pedidos')
 def pedidos():
-    # Cargar datos de pedidos.json
-    with open('pedidos.json', 'r') as file:
-        pedidos = json.load(file)
+    # Cargar datos de la base de datos 
+    pedidos = obtener_todos_los_pedidos()
         
-
     return render_template('pedidos.html', pedidos=pedidos)
 
 @app.route('/inventario')
@@ -85,7 +83,7 @@ def crear_cliente_route():
 @app.route('/pedidos/cambiar_estado/<int:pedido_id>', methods=['POST'])
 def cambiar_estado_pedido_route(pedido_id):
     if request.method == 'POST':
-        cambiar_estado_pedido(pedido_id)
+        cambiar_estado_pedido_bd(pedido_id)
         return redirect(url_for('listar_pedidos'))
     else:
         return 'Método no permitido', 405
@@ -116,7 +114,7 @@ def eliminar_usuario(usuario_id):
 # Rutas para la página de pedidos
 @app.route('/pedidos')
 def listar_pedidos():
-    pedidos = cargar_datos_pedidos()
+    pedidos = obtener_todos_los_pedidos()
     return render_template('pedidos.html', pedidos=pedidos)
 
 
@@ -170,8 +168,8 @@ def calcular_total_pedido(formulario, productos):
     return total
 @app.route('/pedidos/editar/<int:pedido_id>', methods=['GET', 'POST'])
 def editar_pedido_route(pedido_id):
-    clientes = obtener_clientes()
-    pedido = obtener_pedido_por_id(pedido_id)
+    clientes = obtener_clientes_bd()
+    pedido = obtener_pedido_por_id_bd(pedido_id)
     if not pedido:
         return 'Pedido no encontrado', 404
 
@@ -185,14 +183,14 @@ def editar_pedido_route(pedido_id):
             "estado": "pendiente",
             "total": float(request.form.get('total'))
         }
-        editar_pedido(pedido_id, nuevos_datos)
+        editar_pedido_bd(pedido_id, nuevos_datos)
         return redirect(url_for('listar_pedidos'))
     else:
         return render_template('formulario_pedido.html', pedido=pedido, clientes=clientes)
 
 @app.route('/pedidos/eliminar/<int:pedido_id>')
 def eliminar_pedido_route(pedido_id):
-    if eliminar_pedido(pedido_id):
+    if eliminar_pedido_bd(pedido_id):
         return redirect(url_for('listar_pedidos'))
     else:
         return 'Pedido no encontrado', 404
