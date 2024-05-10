@@ -8,7 +8,7 @@ from pdf import generar_pdf
 from functools import wraps
 import secrets
 
-app = Flask(_name_)
+app = Flask(__name__)
 Bootstrap(app)
 app.secret_key=secrets.token_hex(16)
 
@@ -258,5 +258,5 @@ def actualizar_inventario(producto_id, cantidad):
 
 # Resto del código...
 
-if _name_ == 'main':
+if __name__ == 'main':
     app.run(debug=True)
