@@ -53,3 +53,25 @@ def generar_pdf(id_cliente, descripcion_pedido, total, fecha_entrega, fecha_reco
     c.drawString(80,490,f"Fecha para recoger: {fecha_recoger}")
     pedidoSeparado=str(descripcion_pedido).split(",")
     
+    for i in pedidoSeparado:
+        print(i)
+    
+    c.setFont("Helvetica",10)
+    inicialPedidos=460
+    contador=0
+    for i in pedidoSeparado:
+        cadena=f"{str(i).replace("---","------------------------------------------------------------------------------------------------------")}"
+        c.drawString(80,inicialPedidos,cadena)
+        inicialPedidos-=15
+        contador+=1
+    c.setFont("Helvetica",16)
+    c.drawString(80,inicialPedidos-30,f"Total: Q{total}")
+
+    c.setLineWidth(0)  # Ancho de línea cero para que sea un cuadrado vacío
+    c.rect(65, 65, 30, 30)  # Coordenadas x, y y tamaño del cuadrado
+    c.drawString(100,75,"Cancelado y finalizado")
+
+
+    
+
+    c.save()
