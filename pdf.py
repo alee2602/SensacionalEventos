@@ -17,17 +17,15 @@ def obtener_informacion_por_id(id_buscado):
 
 def generar_pdf(id_cliente, descripcion_pedido, total, fecha_entrega, fecha_recoger):
     inforCliente = obtener_informacion_por_id(id_cliente)
-    if not inforCliente:
-        print("Información del cliente no encontrada.")
-        return  # Salir de la función si no hay información del cliente
-    
-    try:
-        total_float = float(total)
-    except ValueError:
-        print(f"Valor de total inválido: {total}")
-        total_float = 0.0 
-
     nombre_cliente = inforCliente.get('nombre', 'Cliente Desconocido').replace(' ', '_')
+    # Formatear el nombre del archivo
+    nombre_archivo = f"{nombre_cliente}_pedido.pdf"
+
+    # Usar os.path.join para construir la ruta completa del archivo
+    ruta_pdf = os.path.join(base_dir, 'reportes', nombre_archivo)
+    c = canvas.Canvas(ruta_pdf, pagesize=letter)
+    width, height = letter
+    
     # Formatear el nombre del archivo
     nombre_archivo = f"{nombre_cliente}_pedido.pdf"
 
