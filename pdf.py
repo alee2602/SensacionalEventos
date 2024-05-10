@@ -53,25 +53,3 @@ def generar_pdf(id_cliente, descripcion_pedido, total, fecha_entrega, fecha_reco
     c.drawString(80,490,f"Fecha para recoger: {fecha_recoger}")
     pedidoSeparado=str(descripcion_pedido).split(",")
     
-    # Descripción del Pedido
-    contenido.append(Spacer(1, 12))
-    contenido.append(Paragraph("<b>Descripción del Pedido:</b>", estilo_normal))
-
-    # Dividir la descripción en líneas si es necesario
-    descripcion_lineas = descripcion_pedido.split(':')
-    for linea in descripcion_lineas:
-        contenido.append(Paragraph(linea, estilo_normal))
-
-    # Información Adicional
-    contenido.append(Spacer(1, 12))
-    contenido.append(Paragraph(f"<b>Fecha de Entrega:</b> {fecha_entrega}", estilo_normal))
-    contenido.append(Paragraph(f"<b>Fecha de Recoger:</b> {fecha_recoger}", estilo_normal))
-
-    # Total
-    contenido.append(Spacer(1, 12))
-    contenido.append(Paragraph(f"<b>Total:</b> Q.{total_float:.2f}", estilo_normal))
-
-    # Construir el PDF
-    pdf.build(contenido)
-
-    print(f"PDF generado y guardado en: {ruta_pdf}")
