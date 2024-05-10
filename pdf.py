@@ -25,37 +25,34 @@ def generar_pdf(id_cliente, descripcion_pedido, total, fecha_entrega, fecha_reco
     ruta_pdf = os.path.join(base_dir, 'reportes', nombre_archivo)
     c = canvas.Canvas(ruta_pdf, pagesize=letter)
     width, height = letter
+
+    margin = 36  # Margen en puntos
+
+    # Dibujar el margen rojo en cada lado
+    c.setFillColorRGB(1, 0, 0)  # Rojo
+    # Margen izquierdo
+    c.rect(0, 0, margin, height, fill=1)
+    # Margen derecho
+    c.rect(width - margin, 0, margin, height, fill=1)
+    # Margen inferior
+    c.rect(0, 0, width, margin, fill=1)
+    # Margen superior
+    c.rect(0, height - margin, width, margin, fill=1)
+
+    titulo=f"Pedido para {nombre_cliente}"
+    c.setFont("Helvetica",20)
+    c.drawString(200,600,titulo)
+
+    c.drawImage(logo_path,60,620,width=100,height=100)
+
+
+    c.setFont("Helvetica",16)
+    c.setFillColorRGB(0, 0, 0)  # Negro
+    c.drawString(80,550,f"Direccion de entrega: {inforCliente.get("direccion")}")
+    c.drawString(80,520,f"Fecha de entrega: {fecha_entrega}")
+    c.drawString(80,490,f"Fecha para recoger: {fecha_recoger}")
+    pedidoSeparado=str(descripcion_pedido).split(",")
     
-    # Formatear el nombre del archivo
-    nombre_archivo = f"{nombre_cliente}_pedido.pdf"
-
-    # Usar os.path.join para construir la ruta completa del archivo
-    ruta_pdf = os.path.join(base_dir, 'reportes', nombre_archivo)
-
-    # Crear un objeto PDF
-    pdf = SimpleDocTemplate(ruta_pdf, pagesize=letter)
-
-    # Configurar el estilo del documento
-    estilos = getSampleStyleSheet()
-    estilo_normal = estilos['Normal']
-    estilo_bold = estilos['Normal']
-    estilo_bold.fontName = 'Helvetica-Bold'
-
-    # Crear el contenido del PDF
-    contenido = []
-
-    # Logo
-    logo = Image(logo_path, width=100, height=100)
-    contenido.append(logo)
-
-    # Título
-    contenido.append(Paragraph("Pedido - Sensacional Eventos", estilo_bold))
-
-    # Información del Cliente
-    contenido.append(Spacer(1, 12))
-    contenido.append(Paragraph(f"<b>Cliente:</b> {inforCliente.get('nombre', 'Cliente Desconocido')} {inforCliente.get('apellido', '')}", estilo_normal))
-    contenido.append(Paragraph(f"<b>Dirección:</b> {inforCliente.get('direccion', 'No Disponible')}", estilo_normal))
-
     # Descripción del Pedido
     contenido.append(Spacer(1, 12))
     contenido.append(Paragraph("<b>Descripción del Pedido:</b>", estilo_normal))
