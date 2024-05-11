@@ -3,7 +3,7 @@ import psycopg2
 from psycopg2 import Error
 import os
 
-script_directorio = os.path.dirname(os.path.abspath(__file__))
+script_directorio = os.path.dirname(os.path.abspath(_file_))
 
 os.chdir(script_directorio)
 
@@ -427,7 +427,7 @@ def obtener_todos_los_pedidos():
 
     return False  # Retornar False en caso de error para indicar que la operación no se completó con éxito
 
-if __name__ == "__main__":
+if __name__ == "_main_":
     conexion = crear_conexion()
     if conexion:
         ejecutar_script(conexion, "schema.sql")
