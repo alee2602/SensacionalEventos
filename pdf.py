@@ -47,9 +47,9 @@ def generar_pdf(id_cliente, descripcion_pedido, total, fecha_entrega, fecha_reco
 
     c.setFont("Helvetica",16)
     c.setFillColorRGB(0, 0, 0)  # Negro
-    c.drawString(80,550,f"Direccion de entrega: {inforCliente.get("direccion")}")
-    c.drawString(80,520,f"Fecha de entrega: {fecha_entrega}")
-    c.drawString(80,490,f"Fecha para recoger: {fecha_recoger}")
+    c.drawString(80, 550, f'Direccion de entrega: {inforCliente.get("direccion")}')
+    c.drawString(80, 520, f'Fecha de entrega: {fecha_entrega}')
+    c.drawString(80, 490, f'Fecha para recoger: {fecha_recoger}')
     pedidoSeparado=str(descripcion_pedido).split(",")
     print(pedidoSeparado)
     for i in pedidoSeparado:
@@ -60,7 +60,7 @@ def generar_pdf(id_cliente, descripcion_pedido, total, fecha_entrega, fecha_reco
     contador=0
     for i in pedidoSeparado:
 
-        cadena=f"{str(i).replace("---","------------------------------------")}"
+        cadena = f"{str(i).replace('---', '------------------------------------')}"
         c.drawString(80,inicialPedidos,cadena)
         inicialPedidos-=15
         contador+=1
@@ -87,7 +87,7 @@ def generar_pdf(id_cliente, descripcion_pedido, total, fecha_entrega, fecha_reco
 
     c.save()
 
-#SOLAMENTE ES PRUEBA, QUITAN ESTA LINEA    
-generar_pdf(15,"vaso---3,plato---6,shaffing---4,tenedor---8,cuchara---9",550,"10/05/2024","11/05/2024")
+    
+
 
 

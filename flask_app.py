@@ -258,5 +258,5 @@ def actualizar_inventario(producto_id, cantidad):
 
 # Resto del código...
 
-if __name__ == 'main':
+if __name__ == '__main__':
     app.run(debug=True)

@@ -3,7 +3,7 @@ import psycopg2
 from psycopg2 import Error
 import os
 
-script_directorio = os.path.dirname(os.path.abspath(_file_))
+script_directorio = os.path.dirname(os.path.abspath(__file__))
 
 os.chdir(script_directorio)
 
