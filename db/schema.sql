@@ -42,3 +42,21 @@ CREATE TABLE IF NOT EXISTS Usuarios(
     password varchar(250),
     FOREIGN KEY (id_Rol) REFERENCES Roles(id)
 );
+
+/* Optimización de base de datos*/
+CREATE INDEX index_clientes_nombre ON Clientes(nombre);
+CREATE INDEX index_clientes_apellido ON Clientes(apellido);
+CREATE INDEX index_clientes_codigoAcceso ON Clientes(codigoAcceso);
+CREATE INDEX index_inventario_producto ON Inventario(producto);
+CREATE INDEX index_inventario_marca ON Inventario(marca);
+CREATE INDEX index_inventario_valor ON Inventario(valor);
+CREATE INDEX index_inventario_precio ON Inventario(precio);
+CREATE INDEX index_inventario_cantidad ON Inventario(cantidad);
+CREATE INDEX index_pedidos_id_cliente ON Pedidos(id_cliente);
+CREATE INDEX index_pedidos_estado ON Pedidos(estado);
+CREATE INDEX index_pedidos_fecha_entrega ON Pedidos(fecha_entrega);
+CREATE INDEX index_pedidos_fecha_recoger ON Pedidos(fecha_recoger);
+CREATE INDEX index_roles_nombre ON Roles(nombre);
+CREATE INDEX index_usuarios_id_rol ON Usuarios(id_Rol);
+CREATE INDEX index_usuarios_username ON Usuarios(userName);
+
