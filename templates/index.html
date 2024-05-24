@@ -1,20 +1,57 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <title>Menú Principal</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .container {
+            max-width: 600px;
+        }
+        .list-group-item {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            margin-bottom: 10px;
+        }
+        .list-group-item:hover {
+            background-color: #0056b3;
+        }
+        h1 {
+            color: #343a40;
+        }
+    </style>
 </head>
-<body class="container mt-4">
-    <center>
-        
-        <h1 class="mb-4">Menú Principal</h1>
-    </center>
-    <div class="list-group">
-        <a href="{{ url_for('clientes') }}" class="list-group-item list-group-item-action">Clientes</a>
-        <a href="{{ url_for('inventario') }}" class="list-group-item list-group-item-action">Inventario</a>
-        <a href="{{ url_for('pedidos') }}" class="list-group-item list-group-item-action">Pedidos</a>
+<body>
+    <div id="app" class="container mt-4">
+        <center>
+            <h1 class="mb-4">Menu principal</h1>
+        </center>
+        <div class="list-group">
+            {% raw %}
+            <a v-for="item in menuItems" :href="item.url" class="list-group-item list-group-item-action">
+                {{ item.name }}
+            </a>
+            {% endraw %}
+        </div>
     </div>
+
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                menuItems: [
+                    { name: 'Clientes', url: '{{ url_for("clientes") }}' },
+                    { name: 'Inventario', url: '{{ url_for("inventario") }}' },
+                    { name: 'Pedidos', url: '{{ url_for("pedidos") }}' }
+                ]
+            }
+        });
+    </script>
 </body>
 </html>
