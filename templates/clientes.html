@@ -14,6 +14,11 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script></head>
 <body class="container mt-4">
     <h1 class="mb-4">Lista de Clientes</h1>
+        <!-- Agregamos un campo de búsqueda -->
+        <div class="form-group">
+            <label for="searchProduct">Buscar Cliente:</label>
+            <input type="text" class="form-control" id="searchProduct" placeholder="Ingrese el nombre del producto">
+        </div>
     <table class="table">
         <thead>
             <tr>
@@ -134,6 +139,7 @@
     </div>
 
  <!-- Agregamos script para la búsqueda en tiempo real -->
+ <!-- Agregamos script para la búsqueda en tiempo real -->
 <script>
     document.getElementById('searchProduct').addEventListener('input', function() {
         var input, filter, table, tr, td, i, txtValue;
@@ -158,5 +164,6 @@
         }
     });
 </script>
+
 </body>
 </html>
